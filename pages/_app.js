@@ -1,33 +1,16 @@
-import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
-import { Layout, Menu, Breadcrumb } from 'antd';
-import '../styles/globals.css';
+import '../styles/globals.css'
+import 'antd/dist/antd.css'
+import MyLayout from '../comps/MyLayout'
+
+import { Layout } from 'antd';
 
 const { Header, Content, Footer } = Layout;
 
 function MyApp({ Component, pageProps }) {
   return (
-    <Layout>
-      <Header style={{ position: 'fixed', zIndex: 1, width: '100%' }}>
-        <div className="logo" />
-        <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
-          <Menu.Item key="1">รายงาน</Menu.Item>
-          <Menu.Item key="2">จัดการสินค้า</Menu.Item>
-          <Menu.Item key="3">จัดการลูกค้า</Menu.Item>
-          <Menu.Item key="3">จัดการออเดอร์</Menu.Item>
-        </Menu>
-      </Header>
-      <Content className="site-layout" style={{ padding: '0 50px', marginTop: 64 }}>
-        <Breadcrumb style={{ margin: '16px 0' }}>
-          <Breadcrumb.Item>Home</Breadcrumb.Item>
-          <Breadcrumb.Item>List</Breadcrumb.Item>
-          <Breadcrumb.Item>App</Breadcrumb.Item>
-        </Breadcrumb>
-        <div className="site-layout-background" style={{ padding: 24, minHeight: 380 }}>
-          <Component {...pageProps} />
-        </div>
-      </Content>
-      <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
-    </Layout>
+    <MyLayout >
+      <Component {...pageProps} />
+    </MyLayout>
   )
 }
 
