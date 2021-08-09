@@ -1,10 +1,7 @@
-import Head from 'next/head'
-import Image from 'next/image'
-
-function Dashboard() {
+function index() {
   return (
     <div>Hello World!</div>
-  )
+  );
 }
 
-export default Dashboard
+export default index;
