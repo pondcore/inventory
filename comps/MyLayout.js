@@ -16,7 +16,7 @@ const MyLayout = ({ children }) => {
                     <Breadcrumb.Item>List</Breadcrumb.Item>
                     <Breadcrumb.Item>App</Breadcrumb.Item>
                 </Breadcrumb>
-                <div className="site-layout-background" style={{ padding: 24, minHeight: 380 }}>
+                <div className={styles.siteLayoutBackground} style={{ padding: 24, minHeight: 380 }}>
                     {children}
                 </div>
             </Content>
