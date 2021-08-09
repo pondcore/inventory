@@ -1,7 +1,7 @@
 
 function Customer() {
     return (
-        <div>Product Page!</div>
+        <div>Customer Page!</div>
     )
 }
 
