@@ -1,7 +1,10 @@
-function index() {
+import { useRouter } from 'next/router';
+
+const Home = () => {
+  const router = useRouter()
   return (
-    <div>Hello World!</div>
+    <div>locales {router.locale}</div>
   );
 }
 
-export default index;
+export default Home;
