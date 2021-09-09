@@ -1,0 +1,9 @@
+{
+    "dashboard": "Dashboard",
+    "manage_customer": "Manage Customer",
+    "manage_product": "Manage Product",
+    "manage_order": "Manage Order",
+    "page_title": "Manage {{text}}",
+    "create_button": "Create {{text}}",
+    "search_input": "Search {{text}}"
+}

@@ -1,6 +1,6 @@
 import { Table, Tag, Space } from 'antd';
 import React, { useEffect } from 'react';
-import axios from "axios";
+import axios from "@/plugins/axios.config";
 
 const Product = () => {
 

@@ -4,7 +4,7 @@ const { Option } = Select;
 
 const CustomerModal = ({ form, visible, onSubmit, onClose }) => {
 
-    return (<Modal width={800} title="เพืมสินค้า" visible={visible} onOk={onSubmit} onCancel={onClose}>
+    return (<Modal width={800} title="เพิ่มสินค้า" visible={visible} onOk={onSubmit} onCancel={onClose}>
         <Row>
             <Col span="14">
                 <Form

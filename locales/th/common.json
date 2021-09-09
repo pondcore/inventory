@@ -1,0 +1,9 @@
+{
+    "dashboard": "รายงาน",
+    "manage_customer": "จัดการลูกค้า",
+    "manage_product": "จัดการสินค้า",
+    "manage_order": "จัดการออเดอร์",
+    "page_title": "จัดการ{{text}}",
+    "create_button": "เพิ่ม{{text}}",
+    "search_input": "ค้นหา{{text}}"
+}

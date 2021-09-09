@@ -1,0 +1,8 @@
+{
+    "localeDetection": false,
+    "locales": ["en", "th"],
+    "defaultLocale": "th",
+    "pages": {
+        "*": ["common", "customer"]
+    }
+}
