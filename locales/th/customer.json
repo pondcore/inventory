@@ -1,4 +1,19 @@
 {
     "title": "ลูกค้า",
-    "search": "ค้นหาลูกค้า"
+    "search": "ค้นหาลูกค้า",
+    "form": {
+        "prefix": "คำนำหน้า:",
+        "first_name": "ชื่อ:",
+        "last_name": "นามสกุล:",
+        "phone": "เบอร์โทรศัพท์:",
+        "address": "ที่อยู่:",
+        "province": "จังหวัด:",
+        "district": "อำเภอ:",
+        "sub_district": "ตำบล:",
+        "postcode": "รหัสไปรษณีย์:",
+        "image": "รูปภาพ:",
+        "image_upload_button": "เลือกรูปภาพ",
+        "select_default": "กรุณาเลือก"
+
+    }
 }

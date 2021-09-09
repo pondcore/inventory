@@ -4,6 +4,7 @@
     "manage_product": "จัดการสินค้า",
     "manage_order": "จัดการออเดอร์",
     "page_title": "จัดการ{{text}}",
+    "create_title": "เพิ่ม{{text}}",
     "create_button": "เพิ่ม{{text}}",
     "search_input": "ค้นหา{{text}}"
 }

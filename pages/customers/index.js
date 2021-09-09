@@ -1,24 +1,26 @@
-import { Form, Button, Row, Col, Input } from 'antd';
+import { Form, Input } from 'antd';
 import ManageLayout from '@/comps/layouts/ManageLayout';
 import useTranslation from 'next-translate/useTranslation';
 import CustomerTable from '@/comps/CustomerTable';
 import CustomerModal from '@/comps/modals/CustomerModal';
-import UploadBlock from '@/comps/forms/UploadBlock';
 
 import axios from '@/plugins/axios.config';
 import React, { useState } from 'react';
-const { Search } = Input;
 
-export const getServerSideProps = async () => {
-    const req = await axios.get("/api/customer");
-    const customers = req.data;
+export const getStaticProps = async () => {
+    const customers = (await axios.get("/api/customer")).data;
+    const provinces = (await axios({
+        method: 'get',
+        url: '/v1/thailand/provinces',
+        baseURL: 'https://thaiaddressapi-thaikub.herokuapp.com/'
+    })).data;
 
     return {
-        props: { customers }
+        props: { customers, provinces }
     }
 }
 
-const Customer = ({ customers }) => {
+const Customer = ({ customers, provinces = [] }) => {
     let { t } = useTranslation();
     const [isCreateVisible, setIsCreateVisible] = useState(false);
     const [form] = Form.useForm();
@@ -37,10 +39,9 @@ const Customer = ({ customers }) => {
     };
 
     return (<>
-        {/* <UploadBlock></UploadBlock> */}
         <ManageLayout title={t('customer:title')} onSearch={onSearch} onCreate={showCreate}>
             <CustomerTable customers={customers} />
-            <CustomerModal form={form} visible={isCreateVisible} onSubmit={handleOk} onClose={handleCancel} />
+            <CustomerModal form={form} visible={isCreateVisible} onSubmit={handleOk} onClose={handleCancel} provinces={provinces} />
         </ManageLayout>
     </>)
 }
