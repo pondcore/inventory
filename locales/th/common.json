@@ -6,5 +6,7 @@
     "page_title": "จัดการ{{text}}",
     "create_title": "เพิ่ม{{text}}",
     "create_button": "เพิ่ม{{text}}",
-    "search_input": "ค้นหา{{text}}"
+    "search_input": "ค้นหา{{text}}",
+    "submit_button": "บันทึก",
+    "cancel_button": "ยกเลิก"
 }

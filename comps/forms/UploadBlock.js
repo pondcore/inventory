@@ -46,9 +46,8 @@ export default function UploadBlock({ button = 'Upload' }) {
                 showUploadList={false}
                 beforeUpload={beforeUpload}
             >
-
                 {imageUrl ?
-                    <img src={imageUrl} alt="avatar" style={{ width: "100%", padding: "6px" }} /> /* eslint-disable-line */
+                    <img src={imageUrl} alt="avatar" style={{ width: '100%', padding: "6px" }} /> /* eslint-disable-line */
                     : selectImageButton}
             </Upload>
         </ImgCrop>

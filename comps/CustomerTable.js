@@ -22,6 +22,7 @@ const CustomerTable = ({ customers }) => {
         {
             title: 'รูป',
             dataIndex: 'image',
+            align: 'center',
             key: 'image',
             render: function avatar(image) {
                 return (<Avatar
@@ -40,6 +41,7 @@ const CustomerTable = ({ customers }) => {
             title: 'ที่อยู่',
             dataIndex: 'description',
             key: 'description',
+            width: 'max-content',
         },
         {
             title: 'ตำบล/แขวง',
@@ -64,6 +66,7 @@ const CustomerTable = ({ customers }) => {
         {
             title: 'จัดการ',
             key: 'action',
+            align: 'center',
             render: manageColumns
         },
     ];

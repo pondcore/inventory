@@ -10,11 +10,11 @@ const MyLayout = ({ children }) => {
     return (
         <Layout className="layout">
             <Nav />
-            <Content className="site-layout" style={{ padding: '0 50px', marginTop: 64 }}>
+            <Content className={"site-layout " + styles['content-layout']} style={{ marginTop: 64 }}>
                 <Breadcrumb style={{ margin: '16px 0' }}>
                     <Breadcrumb.Item>Home</Breadcrumb.Item>
                 </Breadcrumb>
-                <div className={styles.siteLayoutBackground} style={{ padding: 24, minHeight: 380 }}>
+                <div className={styles['site-layout-background']}>
                     {children}
                 </div>
             </Content>

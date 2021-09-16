@@ -5,33 +5,45 @@ import CustomerTable from '@/comps/CustomerTable';
 import CustomerModal from '@/comps/modals/CustomerModal';
 
 import axios from '@/plugins/axios.config';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import addressApi from '@/helpers/formApi';
 
 export const getStaticProps = async () => {
-    const customers = (await axios.get("/api/customer")).data;
-    const provinces = (await axios({
-        method: 'get',
-        url: '/v1/thailand/provinces',
-        baseURL: 'https://thaiaddressapi-thaikub.herokuapp.com/'
-    })).data;
+    const customers = await axios.get("/api/customer");
 
     return {
-        props: { customers, provinces }
+        props: { customers: customers.data }
     }
 }
 
-const Customer = ({ customers, provinces = [] }) => {
+const Customer = ({ customers }) => {
     let { t } = useTranslation();
     const [isCreateVisible, setIsCreateVisible] = useState(false);
+    const [confirmLoading, setConfirmLoading] = React.useState(false);
+    const [provinces, setProvinces] = useState([]);
     const [form] = Form.useForm();
 
+    useEffect(() => {
+        async function fetchProvince() {
+            const provinceResponse = await addressApi.getProvince();
+            setProvinces(provinceResponse.data);
+        }
+        fetchProvince()
+    }, [])
+
     const onSearch = value => console.log(value);
-    const showCreate = () => {
+    const showCreate = async () => {
         setIsCreateVisible(true);
     };
 
     const handleOk = () => {
-        setIsCreateVisible(false);
+        setConfirmLoading(true);
+        console.log(form.getFieldsValue());
+        setTimeout(() => {
+            setConfirmLoading(false);
+            setIsCreateVisible(false);
+            form.resetFields();
+        }, 1000);
     };
 
     const handleCancel = () => {
@@ -41,7 +53,7 @@ const Customer = ({ customers, provinces = [] }) => {
     return (<>
         <ManageLayout title={t('customer:title')} onSearch={onSearch} onCreate={showCreate}>
             <CustomerTable customers={customers} />
-            <CustomerModal form={form} visible={isCreateVisible} onSubmit={handleOk} onClose={handleCancel} provinces={provinces} />
+            <CustomerModal form={form} visible={isCreateVisible} confirmLoading={confirmLoading} onSubmit={handleOk} onClose={handleCancel} provinces={provinces.data} />
         </ManageLayout>
     </>)
 }

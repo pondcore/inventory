@@ -3,6 +3,6 @@
     "locales": ["en", "th"],
     "defaultLocale": "th",
     "pages": {
-        "*": ["common", "customer"]
+        "*": ["common", "customer", "validate"]
     }
 }
