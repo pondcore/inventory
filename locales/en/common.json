@@ -6,5 +6,7 @@
     "page_title": "Manage {{text}}",
     "create_title": "Create {{text}}",
     "create_button": "Create {{text}}",
-    "search_input": "Search {{text}}"
+    "search_input": "Search {{text}}",
+    "submit_button": "submit",
+    "cancel_button": "cancel"
 }

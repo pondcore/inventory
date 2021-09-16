@@ -1,4 +1,5 @@
-.siteLayoutBackground {
+.site-layout-background {
+  min-width: fit-content;
   min-height: 280px;
   padding: 24px;
   background: #fff;
@@ -48,4 +49,16 @@
 
 .ant-layout-header {
   background: white
+}
+
+@media only screen and (max-width : 1024px) {
+  .content-layout {
+    padding: 0 1rem;
+  }
+}
+
+@media only screen and (min-width: 1023.99px) {
+  .content-layout {
+    padding: 0 50px;
+  }
 }
