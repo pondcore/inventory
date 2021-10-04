@@ -18,7 +18,7 @@ const ManageLayout = ({ children, title, onSearch, onCreate }) => {
                 </Col>
                 <Col span="12" style={{ textAlign: 'right' }}>
                     <Button size={"large"} type="primary" onClick={onCreate}>
-                        {t('common:create_button', { text: title })}
+                        {t('common:createButton', { text: title })}
                     </Button>
                 </Col>
             </Row>

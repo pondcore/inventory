@@ -3,8 +3,19 @@
     "manage_customer": "จัดการลูกค้า",
     "manage_product": "จัดการสินค้า",
     "manage_order": "จัดการออเดอร์",
-    "page_title": "จัดการ{{text}}",
-    "create_title": "เพิ่ม{{text}}",
-    "create_button": "เพิ่ม{{text}}",
-    "search_input": "ค้นหา{{text}}"
+    "page_title": "ระบบจัดการ{{text}}",
+    "createTitle": "เพิ่ม{{text}}",
+    "createButton": "เพิ่ม{{text}}",
+    "editTitle": "แก้ไข{{text}}",
+    "editButton": "แก้ไข",
+    "deleteTitle": "คุณต้องการลบ{{text}}ใช่ไหม?",
+    "deleteDescription": "เมื่อ{{text}}นี้ถูกลบแล้ว จะไม่สามารถกู้คืนได้อีก",
+    "deleteButton": "ลบ",
+    "search_input": "ค้นหา{{text}}",
+    "form": {
+        "submit": "บันทึก",
+        "cancel": "ยกเลิก",
+        "select_default": "กรุณาเลือก",
+        "confirm": "ยืนยัน"
+    }
 }
