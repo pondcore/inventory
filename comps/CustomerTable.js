@@ -7,7 +7,7 @@ import axios from '@/plugins/axios.config';
 import React, { useState, useEffect, useImperativeHandle } from 'react';
 
 
-const CustomerTable = ({ onEdit, onDelete }, ref) => {
+const CustomerTable = ({ onEdit }, ref) => {
     const [customers, setCustomers] = useState([]);
     const [tableProps, setTableProps] = useState({
         loading: false,
@@ -47,9 +47,9 @@ const CustomerTable = ({ onEdit, onDelete }, ref) => {
 
     const manageColumns = (text, record) => (
         <Space size="middle">
-            <Button onClick={() => { onEdit(record) }}>Edit</Button>
+            <Button onClick={() => { onEdit(record.id, record.key) }}>{t('common:editButton')}</Button>
             <DeleteModal
-                deleteId={record.id}
+                deleteId={record.key}
                 buttonText={t('common:deleteButton')}
                 handleConfirm={fetch}
                 title={t('common:deleteTitle', { text: t('customer:title') })}
@@ -73,7 +73,7 @@ const CustomerTable = ({ onEdit, onDelete }, ref) => {
             }
         },
         {
-            title: 'ชื่อ',
+            title: 'ชื่อ-สกุล',
             dataIndex: 'fullname',
             key: 'fullname',
         },

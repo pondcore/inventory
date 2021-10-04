@@ -12,30 +12,40 @@ const Customer = () => {
     const tableRef = useRef(null);
     const [isCreateVisible, setIsCreateVisible] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
+    const [loadingModal, setLoadingModal] = useState(false);
     const [form] = Form.useForm();
     const [imageUrl, setImageUrl] = useState();
+    const [modalType, setModalType] = useState('create');
 
     const onSearch = value => console.log(value);
-    const showCreate = async () => {
+    const showCreateModal = async () => {
+        setModalType('create');
         setIsCreateVisible(true);
     };
 
-    const handleOk = () => {
+    const handleSubmit = (formType) => {
         setConfirmLoading(true);
+        setLoadingModal(true)
         let formData = {
             ...form.getFieldsValue(),
             image: imageUrl,
-        };
-        console.log(formData);
-        axios.post('/api/customer', formData).then((response) => {
+        }
+        let url = formType == 'create' ? '/api/customer' : `/api/customer/${formData.addrId}`;
+        axios({
+            method: formType == 'create' ? 'POST' : 'PUT',
+            url,
+            data: formData
+        }).then((response) => {
             setIsCreateVisible(false);
             setConfirmLoading(false);
+            setLoadingModal(false);
             form.resetFields();
             setImageUrl(null);
             tableRef.current.fetch();
         }).catch(err => {
             let errorMessage = typeof err.response !== "undefined" ? err.response.data.message : err.message;
             setConfirmLoading(false);
+            setLoadingModal(false);
             message.error(errorMessage);
         })
     };
@@ -43,26 +53,50 @@ const Customer = () => {
     const handleClose = () => {
         setIsCreateVisible(false);
         setConfirmLoading(false);
+        setLoadingModal(false);
         form.resetFields();
         setImageUrl(null);
     };
 
-    const onEditCustomer = () => {
-        setIsCreateVisible(true);
-    }
+    const showEditModal = (dataId, addrKey) => {
+        setModalType('update');
+        setLoadingModal(true);
+        axios.get(`/api/customer/${addrKey}`).then(({ data }) => {
+            const addrData = data.addr.find(item => item._id === addrKey)
+            form.setFieldsValue({
+                id: dataId,
+                addrId: addrKey,
+                prefix: data.prefix,
+                firstname: data.firstname,
+                lastname: data.lastname,
+                phone: data.phone,
+                province: addrData.province_name,
+                district: addrData.amphur_name,
+                subdistrict: addrData.tambon_name,
+                postcode: addrData.post_code,
+                address: addrData.description
+            });
+            setImageUrl(data.image);
+            setLoadingModal(false);
+        }).catch(err => {
+            let errorMessage = typeof err.response !== "undefined" ? err.response.data.message : err.message;
+            setConfirmLoading(false);
+            message.error(errorMessage);
+        })
 
-    const onDeleteCustomer = () => {
         setIsCreateVisible(true);
     }
 
     return (
-        <ManageLayout title={t('customer:title')} onSearch={onSearch} onCreate={showCreate}>
-            <CustomerTable ref={tableRef} onEdit={onEditCustomer} onDelete={onDeleteCustomer} />
+        <ManageLayout title={t('customer:title')} onSearch={onSearch} onCreate={showCreateModal}>
+            <CustomerTable ref={tableRef} onEdit={showEditModal} />
             <CustomerModal
                 form={form}
+                modalType={modalType}
                 visible={isCreateVisible}
-                onSubmit={handleOk}
+                onSubmit={handleSubmit}
                 onClose={handleClose}
+                loadingModal={loadingModal}
                 confirmLoading={confirmLoading}
                 imageUrl={imageUrl}
                 setImageUrl={setImageUrl}
