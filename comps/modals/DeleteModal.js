@@ -6,7 +6,7 @@ import axios from '@/plugins/axios.config';
 
 const { confirm } = Modal;
 
-const DeleteModal = ({ deleteId, handleConfirm, buttonText = "Delete", title = "Are you sure?", content = "" }) => {
+const DeleteModal = ({ deleteUrlId, handleConfirm, buttonText = "Delete", title = "Are you sure?", content = "" }) => {
     let { t } = useTranslation();
 
     const showPromiseConfirm = () => {
@@ -20,7 +20,7 @@ const DeleteModal = ({ deleteId, handleConfirm, buttonText = "Delete", title = "
             onOk() {
                 return axios({
                     method: 'DELETE',
-                    url: `/api/customer/${deleteId}`,
+                    url: deleteUrlId,
                 }).then(handleConfirm).catch(err => {
                     let errorMessage = typeof err.response !== "undefined" ? err.response.data.message : err.message;
                     message.error(errorMessage);

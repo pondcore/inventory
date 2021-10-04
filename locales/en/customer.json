@@ -1,6 +1,5 @@
 {
     "title": "customer",
-    "search": "search",
     "form": {
         "prefix": "Prefix",
         "first_name": "Name",

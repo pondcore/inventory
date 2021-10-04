@@ -1,114 +1,103 @@
-import { Table, Tag, Space } from 'antd';
-import React, { useEffect } from 'react';
+import { Form, message } from 'antd';
+import ManageLayout from '@/comps/layouts/ManageLayout';
+import useTranslation from 'next-translate/useTranslation';
+import ProductTable from '@/comps/table/ProductTable';
+import ProductModal from '@/comps/modals/ProductModal';
+
 import axios from "@/plugins/axios.config";
+import React, { useState, useRef } from 'react';
 
 const Product = () => {
+    let { t } = useTranslation();
+    const tableRef = useRef(null);
+    const [isCreateVisible, setIsCreateVisible] = useState(false);
+    const [confirmLoading, setConfirmLoading] = useState(false);
+    const [loadingModal, setLoadingModal] = useState(false);
+    const [form] = Form.useForm();
+    const [imageUrl, setImageUrl] = useState();
+    const [modalType, setModalType] = useState('create');
 
-    useEffect(() => {
-        axios
-            .get("/api/user")
-            .then(response => {
-                console.log("response: ", response)
-                // do something about response
-            })
-            .catch(err => {
-                console.error(err)
-            })
-    })
+    const onSearch = value => console.log(value);
+    const showCreateModal = async () => {
+        setModalType('create');
+        setIsCreateVisible(true);
+    };
 
-    const manageColumns = (text, record) => (
-        <Space size="middle">
-            <a>Edit</a>
-            <a>Delete</a>
-        </Space>
-    );
+    const handleSubmit = (formType) => {
+        setConfirmLoading(true);
+        setLoadingModal(true)
+        let formData = {
+            ...form.getFieldsValue(),
+            image: imageUrl,
+        }
+        let url = formType == 'create' ? '/api/product' : `/api/product/${formData.productId}`;
+        axios({
+            method: formType == 'create' ? 'POST' : 'PUT',
+            url,
+            data: formData
+        }).then((response) => {
+            setIsCreateVisible(false);
+            setConfirmLoading(false);
+            setLoadingModal(false);
+            form.resetFields();
+            setImageUrl(null);
+            tableRef.current.fetch();
+        }).catch(err => {
+            let errorMessage = typeof err.response !== "undefined" ? err.response.data.message : err.message;
+            setConfirmLoading(false);
+            setLoadingModal(false);
+            message.error(errorMessage);
+        })
+    };
 
-    const columns = [
-        {
-            title: 'รูป',
-            dataIndex: 'image',
-            key: 'image',
-        },
-        {
-            title: 'ชื่อ',
-            dataIndex: 'name',
-            key: 'name',
-        },
-        {
-            title: 'รหัส SKU',
-            dataIndex: 'sku',
-            key: 'sku',
-        },
-        {
-            title: 'ราคา/บาท',
-            dataIndex: 'price',
-            key: 'price',
-        },
-        {
-            title: 'น้ำหนัก',
-            dataIndex: 'weight',
-            key: 'weight',
-        },
-        {
-            title: 'จำนวน',
-            dataIndex: 'qty',
-            key: 'qty',
-        },
-        {
-            title: 'จัดการ',
-            key: 'action',
-            render: manageColumns
-        },
-    ];
+    const handleClose = () => {
+        setIsCreateVisible(false);
+        setConfirmLoading(false);
+        setLoadingModal(false);
+        form.resetFields();
+        setImageUrl(null);
+    };
 
-    const dataSource = [
-        {
-            key: '1',
-            name: 'John Brown',
-            image: 32,
-            sku: '10203040',
-            price: 10,
-            weight: 20,
-            qty: 30
-        },
-        {
-            key: '2',
-            name: 'lorem',
-            image: 32,
-            sku: '10203040',
-            price: 10,
-            weight: 20,
-            qty: 30
-        }, {
-            key: '3',
-            name: 'ipsum',
-            image: 32,
-            sku: '10203040',
-            price: 10,
-            weight: 20,
-            qty: 30
-        },
-    ];
+    const showEditModal = (dataId) => {
+        setModalType('update');
+        setLoadingModal(true);
+        axios.get(`/api/product/${dataId}`).then(({ data }) => {
+            form.setFieldsValue({
+                productId: dataId,
+                product_name: data.product_name,
+                price: data.price,
+                qty: data.qty,
+                weight: data.weight,
+                sku: data.sku,
+                cost: data.cost,
+                vat: data.vat,
+            });
+            setImageUrl(data.image);
+            setLoadingModal(false);
+        }).catch(err => {
+            let errorMessage = typeof err.response !== "undefined" ? err.response.data.message : err.message;
+            setConfirmLoading(false);
+            message.error(errorMessage);
+        })
 
-    // constructor = (props) => {
-    //     super(props);
-
-    //     this.state = {
-    //         data: [],
-    //         pagination: {
-    //             current: 1,
-    //             pageSize: 10,
-    //         },
-    //         loading: false,
-    //     };
-    // }
-
+        setIsCreateVisible(true);
+    }
 
     return (
-        <div>
-            <div className="page-header"><h1>จัดการสินค้า</h1></div>
-            <Table dataSource={dataSource} columns={columns} />
-        </div>
+        <ManageLayout title={t('product:title')} onSearch={onSearch} onCreate={showCreateModal}>
+            <ProductTable ref={tableRef} onEdit={showEditModal} />
+            <ProductModal
+                form={form}
+                modalType={modalType}
+                visible={isCreateVisible}
+                onSubmit={handleSubmit}
+                onClose={handleClose}
+                loadingModal={loadingModal}
+                confirmLoading={confirmLoading}
+                imageUrl={imageUrl}
+                setImageUrl={setImageUrl}
+            />
+        </ManageLayout >
     )
 }
 
