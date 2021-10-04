@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Upload, message } from 'antd';
 import ImgCrop from 'antd-img-crop';
 import { PlusOutlined } from '@ant-design/icons';
-import FileBase64 from 'react-file-base64';
 
 
 function getBase64(img, callback) {

@@ -40,10 +40,10 @@ const CustomerModal = ({ form, visible, onSubmit, onClose, confirmLoading, image
         <Row gutter={16}>
             <Col xs={24} sm={24} md={10}>
                 <div style={{ marginBottom: "6px" }}>
-                    {t('customer:form.image')}:
+                    {t('customer:form.image')}
                 </div>
                 <div style={{ width: "100%", textAlign: "center" }}>
-                    <UploadBlock button={t('customer:form.image_upload_button')} />
+                    <UploadBlock imageUrl={imageUrl} setImageUrl={setImageUrl} button={t('customer:form.image_upload_button')} />
                 </div>
             </Col>
             <Col xs={24} sm={24} md={14}>
@@ -71,7 +71,7 @@ const CustomerModal = ({ form, visible, onSubmit, onClose, confirmLoading, image
                         </Col>
                         <Col span="12">
                             <Form.Item
-                                name="firstName"
+                                name="firstname"
                                 label={t('customer:form.first_name')}
                                 rules={[
                                     {
@@ -87,7 +87,7 @@ const CustomerModal = ({ form, visible, onSubmit, onClose, confirmLoading, image
                     <Row gutter={16}>
                         <Col span="12">
                             <Form.Item
-                                name="lastName"
+                                name="lastname"
                                 label={t('customer:form.last_name')}
                                 rules={[
                                     {
@@ -109,13 +109,13 @@ const CustomerModal = ({ form, visible, onSubmit, onClose, confirmLoading, image
                                         message: t('validate:required', { text: t('customer:form.phone') })
                                     },
                                     {
-                                        type: 'number',
+                                        pattern: new RegExp(/^[0-9]*$/g),
                                         message: t('validate:number', { text: t('customer:form.phone') })
 
                                     }
                                 ]}
                             >
-                                <Input placeholder="0123456789" maxLength={10} />
+                                <Input placeholder="0987654321" maxLength={10} />
                             </Form.Item>
                         </Col>
                     </Row>
@@ -132,7 +132,7 @@ const CustomerModal = ({ form, visible, onSubmit, onClose, confirmLoading, image
                                 ]}
                             >
                                 <Select
-                                    placeholder={t('customer:form.select_default')}
+                                    placeholder={t('common:form.select_default')}
                                     onChange={onProvinceSelect}
                                     showSearch
                                     optionFilterProp="children"
@@ -143,8 +143,8 @@ const CustomerModal = ({ form, visible, onSubmit, onClose, confirmLoading, image
                                         optionA.children.toLowerCase().localeCompare(optionB.children.toLowerCase())
                                     }
                                 >
-                                    {provinces.map((item, index) =>
-                                        <Option key={index} value={item.province}>{item.province}</Option>
+                                    {Object.keys(ADDRESS_DATA).map((item, index) =>
+                                        <Option key={index} value={item}>{item}</Option>
                                     )}
                                 </Select>
                             </Form.Item>
@@ -161,10 +161,9 @@ const CustomerModal = ({ form, visible, onSubmit, onClose, confirmLoading, image
                                 ]}
                             >
                                 <Select
-                                    placeholder={t('customer:form.select_default')}
+                                    placeholder={t('common:form.select_default')}
                                     onChange={onDistrictSelect}
-                                    disabled={!isProvinceSelected}
-                                    loading={isDistrictLoading}
+                                    disabled={form.getFieldValue('province') == null}
                                     showSearch
                                     optionFilterProp="children"
                                     filterOption={(input, option) =>
@@ -174,7 +173,7 @@ const CustomerModal = ({ form, visible, onSubmit, onClose, confirmLoading, image
                                         optionA.children.toLowerCase().localeCompare(optionB.children.toLowerCase())
                                     }
                                 >
-                                    {districts.map((item, index) =>
+                                    {Object.keys(districts).map((item, index) =>
                                         <Option key={index} value={item}>{item}</Option>
                                     )}
                                 </Select>
@@ -184,7 +183,7 @@ const CustomerModal = ({ form, visible, onSubmit, onClose, confirmLoading, image
                     <Row gutter={16}>
                         <Col span="12">
                             <Form.Item
-                                name="sub-district"
+                                name="subdistrict"
                                 label={t('customer:form.sub_district')}
                                 rules={[
                                     {
@@ -194,9 +193,8 @@ const CustomerModal = ({ form, visible, onSubmit, onClose, confirmLoading, image
                                 ]}
                             >
                                 <Select
-                                    placeholder={t('customer:form.select_default')}
-                                    disabled={!isDistrictSelected}
-                                    loading={isSubDistrictLoading}
+                                    placeholder={t('common:form.select_default')}
+                                    disabled={form.getFieldValue('district') == null}
                                     showSearch
                                     optionFilterProp="children"
                                     filterOption={(input, option) =>
@@ -220,10 +218,10 @@ const CustomerModal = ({ form, visible, onSubmit, onClose, confirmLoading, image
                                     {
                                         required: true,
                                         message: t('validate:required', { text: t('customer:form.postcode') })
-                                    },
-                                    {
-                                        type: 'number',
+                                    }, {
+                                        pattern: new RegExp(/^[0-9]*$/g),
                                         message: t('validate:number', { text: t('customer:form.postcode') })
+
                                     }
                                 ]}
                             >
@@ -238,6 +236,7 @@ const CustomerModal = ({ form, visible, onSubmit, onClose, confirmLoading, image
                                 label={t('customer:form.address')}
                             >
                                 <TextArea
+                                    placeholder={t('customer:form.addressPlaceholder')}
                                     autoSize={{ minRows: 3, maxRows: 6 }}
                                 />
                             </Form.Item>

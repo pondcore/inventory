@@ -1,4 +1,4 @@
-import { Form, Input, message } from 'antd';
+import { Form, message } from 'antd';
 import ManageLayout from '@/comps/layouts/ManageLayout';
 import useTranslation from 'next-translate/useTranslation';
 import CustomerTable from '@/comps/CustomerTable';
@@ -35,7 +35,6 @@ const Customer = () => {
             tableRef.current.fetch();
         }).catch(err => {
             let errorMessage = typeof err.response !== "undefined" ? err.response.data.message : err.message;
-            setIsCreateVisible(false);
             setConfirmLoading(false);
             message.error(errorMessage);
         })
