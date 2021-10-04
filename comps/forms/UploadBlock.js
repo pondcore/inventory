@@ -10,8 +10,7 @@ function getBase64(img, callback) {
     reader.readAsDataURL(img);
 }
 
-export default function UploadBlock({ button = 'Upload' }) {
-    const [imageUrl, setImageUrl] = useState();
+export default function UploadBlock({ imageUrl = "", setImageUrl, button = 'Upload' }) {
 
     const selectImageButton = (
         <div>
@@ -37,7 +36,7 @@ export default function UploadBlock({ button = 'Upload' }) {
         return false;
     }
 
-    return (<>
+    return (
         <ImgCrop>
             <Upload
                 name="avatar"
@@ -46,11 +45,10 @@ export default function UploadBlock({ button = 'Upload' }) {
                 showUploadList={false}
                 beforeUpload={beforeUpload}
             >
-
                 {imageUrl ?
-                    <img src={imageUrl} alt="avatar" style={{ width: "100%", padding: "6px" }} /> /* eslint-disable-line */
+                    <img src={imageUrl} alt="avatar" style={{ width: '100%', padding: "6px" }} /> /* eslint-disable-line */
                     : selectImageButton}
             </Upload>
         </ImgCrop>
-    </>);
+    );
 };
