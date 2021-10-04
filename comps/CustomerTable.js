@@ -1,20 +1,60 @@
 import { Avatar, Button, Table, Space } from 'antd';
 import styles from './css/TABLE.module.css'
+import DeleteModal from '@/comps/modals/DeleteModal';
+import useTranslation from 'next-translate/useTranslation';
 
-const CustomerTable = ({ customers }) => {
+import axios from '@/plugins/axios.config';
+import React, { useState, useEffect, useImperativeHandle } from 'react';
 
-    const editCustomer = (data) => {
-        console.log('Edit', data);
-    }
 
-    const deleteCustomer = (data) => {
-        console.log('Delete', data);
-    }
+const CustomerTable = ({ onEdit }, ref) => {
+    const [customers, setCustomers] = useState([]);
+    const [tableProps, setTableProps] = useState({
+        loading: false,
+        pagination: {
+            current: 1,
+            pageSize: 10,
+        },
+    });
+    let { t } = useTranslation();
+
+    const fetch = (params = {}) => {
+        setTableProps({ ...tableProps, loading: true });
+        axios({
+            url: '/api/customer',
+            method: 'get',
+            type: 'json',
+        }).then(response => {
+            setCustomers(response.data.reverse());
+            setTableProps({
+                ...tableProps,
+                loading: false,
+                pagination: {
+                    ...tableProps.pagination,
+                    total: response.data.length,
+                }
+            });
+        });
+    };
+
+    useImperativeHandle(ref, () => ({
+        fetch() {
+            fetch({ pagination: tableProps.pagination })
+        }
+    }));
+
+    useEffect(() => fetch({ pagination: tableProps.pagination }), []);
 
     const manageColumns = (text, record) => (
         <Space size="middle">
-            <Button onClick={() => { editCustomer(record) }}>Edit</Button>
-            <Button onClick={() => { deleteCustomer(record) }}>Delete</Button>
+            <Button onClick={() => { onEdit(record.id, record.key) }}>{t('common:editButton')}</Button>
+            <DeleteModal
+                deleteId={record.key}
+                buttonText={t('common:deleteButton')}
+                handleConfirm={fetch}
+                title={t('common:deleteTitle', { text: t('customer:title') })}
+                content={t('common:deleteDescription', { text: t('customer:title') })}
+            />
         </Space>
     );
 
@@ -33,7 +73,7 @@ const CustomerTable = ({ customers }) => {
             }
         },
         {
-            title: 'ชื่อ',
+            title: 'ชื่อ-สกุล',
             dataIndex: 'fullname',
             key: 'fullname',
         },
@@ -71,12 +111,17 @@ const CustomerTable = ({ customers }) => {
         },
     ];
 
+
+
     return (
         <Table
             dataSource={customers}
             columns={columns}
+            tableLayout="auto"
+            pagination={tableProps.pagination}
+            loading={tableProps.loading}
         />
     );
 }
 
-export default CustomerTable;
+export default React.forwardRef(CustomerTable);

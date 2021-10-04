@@ -4,9 +4,18 @@
     "manage_product": "Manage Product",
     "manage_order": "Manage Order",
     "page_title": "Manage {{text}}",
-    "create_title": "Create {{text}}",
-    "create_button": "Create {{text}}",
+    "createTitle": "Create {{text}}",
+    "createButton": "Create {{text}}",
+    "editTitle": "Edit {{text}}",
+    "editButton": "Edit",
+    "deleteTitle": "Are you sure to delete these {{text}}?",
+    "deleteDescription": "You will not be able to recover this {{text}} anymore.",
+    "deleteButton": "Delete",
     "search_input": "Search {{text}}",
-    "submit_button": "submit",
-    "cancel_button": "cancel"
+    "form": {
+        "submit": "Submit",
+        "cancel": "Cancel",
+        "select_default": "Select a option",
+        "confirm": "Confirm"
+    }
 }

@@ -7,12 +7,12 @@
         "last_name": "Surname",
         "phone": "Phone",
         "address": "Address",
+        "addressPlaceholder": "address description",
         "province": "Province",
         "district": "District",
         "sub_district": "Sub-district",
         "postcode": "Postal Code",
         "image": "Image",
-        "image_upload_button": "Upload Image",
-        "select_default": "Select a option"
+        "image_upload_button": "Upload Image"
     }
 }
