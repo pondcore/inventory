@@ -3,6 +3,11 @@
     "locales": ["en", "th"],
     "defaultLocale": "th",
     "pages": {
-        "*": ["common", "customer", "validate"]
+        "*": [
+            "common",
+            "customer",
+            "validate",
+            "product"
+        ]
     }
 }

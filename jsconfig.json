@@ -1,5 +1,5 @@
-
 {
+  "exclude": ["node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
@@ -9,5 +9,5 @@
       "@/constants/*": ["assets/constants/*"],
       "@/helpers/*": ["assets/helpers/*"],
     }
-  }
+  },
 }
