@@ -62,6 +62,7 @@ const CustomerTable = ({ onEdit, onDelete }, ref) => {
         {
             title: 'รูป',
             dataIndex: 'image',
+            align: 'center',
             key: 'image',
             render: function avatar(image) {
                 return (<Avatar
@@ -80,6 +81,7 @@ const CustomerTable = ({ onEdit, onDelete }, ref) => {
             title: 'ที่อยู่',
             dataIndex: 'description',
             key: 'description',
+            width: 'max-content',
         },
         {
             title: 'ตำบล/แขวง',
@@ -104,6 +106,7 @@ const CustomerTable = ({ onEdit, onDelete }, ref) => {
         {
             title: 'จัดการ',
             key: 'action',
+            align: 'center',
             render: manageColumns
         },
     ];

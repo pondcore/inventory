@@ -41,7 +41,7 @@ const Customer = () => {
         })
     };
 
-    const handleCancel = () => {
+    const handleClose = () => {
         setIsCreateVisible(false);
         setConfirmLoading(false);
         form.resetFields();
@@ -63,12 +63,12 @@ const Customer = () => {
                 form={form}
                 visible={isCreateVisible}
                 onSubmit={handleOk}
-                onClose={handleCancel}
+                onClose={handleClose}
                 confirmLoading={confirmLoading}
                 imageUrl={imageUrl}
                 setImageUrl={setImageUrl}
             />
-        </ManageLayout>
+        </ManageLayout >
     )
 }
 

@@ -21,7 +21,7 @@ async function getDistrict(provinceName) {
 async function getSubdistrict(provinceName, districtName) {
     return await axios({
         method: 'get',
-        url: `/v1/thailand/provinces/${provinceName}/district/${districtName}`,
+        url: `/v1/thailand/provinces/${provinceName}/district`,
         baseURL: 'https://thaiaddressapi-thaikub.herokuapp.com/'
     });
 }
