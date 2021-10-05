@@ -1,21 +1,109 @@
-import { Form, message } from 'antd';
-import ManageLayout from '@/comps/layouts/ManageLayout';
+import { Avatar, Button, Space, Form, message } from 'antd';
+import IndexPageLayout from '@/comps/layouts/IndexPageLayout';
 import useTranslation from 'next-translate/useTranslation';
 import ProductTable from '@/comps/table/ProductTable';
 import ProductModal from '@/comps/modals/ProductModal';
+import DeleteModal from '@/comps/modals/DeleteModal';
 
 import axios from "@/plugins/axios.config";
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 const Product = () => {
     let { t } = useTranslation();
-    const tableRef = useRef(null);
     const [isCreateVisible, setIsCreateVisible] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [loadingModal, setLoadingModal] = useState(false);
     const [form] = Form.useForm();
     const [imageUrl, setImageUrl] = useState();
     const [modalType, setModalType] = useState('create');
+    const [products, setProducts] = useState([]);
+    const [tableProps, setTableProps] = useState({
+        loading: false,
+        pagination: {
+            current: 1,
+            pageSize: 10,
+        },
+    });
+
+    const fetch = (params = {}) => {
+        setTableProps({ ...tableProps, loading: true });
+        axios({
+            url: '/api/product',
+            method: 'get',
+            type: 'json',
+        }).then(response => {
+            setProducts(response.data.reverse());
+            setTableProps({
+                ...tableProps,
+                loading: false,
+                pagination: {
+                    ...tableProps.pagination,
+                    total: response.data.length,
+                }
+            });
+        });
+    };
+    useEffect(() => fetch({ pagination: tableProps.pagination }), []);
+
+    const manageColumns = (text, record) => (
+        <Space size="middle" >
+            <Button onClick={() => { showEditModal(record._id) }}>{t('common:editButton')}</Button>
+            <DeleteModal
+                deleteUrlId={`/api/product/${record._id}`}
+                buttonText={t('common:deleteButton')}
+                handleConfirm={fetch}
+                title={t('common:deleteTitle', { text: t('product:title') })}
+                content={t('common:deleteDescription', { text: t('product:title') })}
+            />
+        </Space>
+    );
+
+    const columns = [
+        {
+            title: 'รูป',
+            dataIndex: 'image',
+            align: 'center',
+            key: 'image',
+            render: function avatar(image) {
+                return (<Avatar
+                    size={64}
+                    src={image}
+                    alt=""
+                />)
+            }
+        },
+        {
+            title: 'ชื่อสินค้า',
+            dataIndex: 'product_name',
+            key: 'name',
+        },
+        {
+            title: 'รหัส SKU',
+            dataIndex: 'sku',
+            key: 'sku',
+        },
+        {
+            title: 'ราคา/บาท',
+            dataIndex: 'price',
+            key: 'price',
+        },
+        {
+            title: 'น้ำหนัก',
+            dataIndex: 'weight',
+            key: 'weight',
+        },
+        {
+            title: 'จำนวน',
+            dataIndex: 'qty',
+            key: 'qty',
+        },
+        {
+            title: 'จัดการ',
+            key: 'action',
+            align: 'center',
+            render: manageColumns
+        },
+    ];
 
     const onSearch = value => console.log(value);
     const showCreateModal = async () => {
@@ -41,7 +129,7 @@ const Product = () => {
             setLoadingModal(false);
             form.resetFields();
             setImageUrl(null);
-            tableRef.current.fetch();
+            fetch();
         }).catch(err => {
             let errorMessage = typeof err.response !== "undefined" ? err.response.data.message : err.message;
             setConfirmLoading(false);
@@ -84,8 +172,8 @@ const Product = () => {
     }
 
     return (
-        <ManageLayout title={t('product:title')} onSearch={onSearch} onCreate={showCreateModal}>
-            <ProductTable ref={tableRef} onEdit={showEditModal} />
+        <IndexPageLayout title={t('product:title')} onSearch={onSearch} onCreate={showCreateModal}>
+            <ProductTable tableData={products} columns={columns} />
             <ProductModal
                 form={form}
                 modalType={modalType}
@@ -97,7 +185,7 @@ const Product = () => {
                 imageUrl={imageUrl}
                 setImageUrl={setImageUrl}
             />
-        </ManageLayout >
+        </IndexPageLayout >
     )
 }
 

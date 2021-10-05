@@ -1,0 +1,22 @@
+{
+    "title": "order",
+    "table": {
+        "printButton": "print"
+    },
+    "form": {
+        "customerInfo": "Customer information",
+        "productList": "Product list",
+        "customerName": "Customer name",
+        "customerPhone": "Phone",
+        "customerAddress": "Address",
+        "customerSubdistrict": "Sub-district",
+        "customerDistrict": "District",
+        "customerProvince": "Province",
+        "customerZipCode": "Postal code",
+        "productName": "Product name",
+        "addProduct": "Add product",
+        "shippingCost": "Shipping cost",
+        "discount": "Discount",
+        "totalPrice": "Total price"
+    }
+}

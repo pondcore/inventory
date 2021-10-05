@@ -1,5 +1,4 @@
 import { Avatar, Button, Table, Space } from 'antd';
-import styles from './css/TABLE.module.css'
 import DeleteModal from '@/comps/modals/DeleteModal';
 import useTranslation from 'next-translate/useTranslation';
 
