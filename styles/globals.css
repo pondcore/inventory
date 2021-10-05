@@ -24,3 +24,7 @@ body {
         height: 300px !important;
     }
 }
+
+.color-primary {
+    color: #153250 !important;
+}

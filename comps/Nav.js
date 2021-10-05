@@ -31,7 +31,7 @@ const Nav = (props) => {
                     </div>
                 ))}
             </div>
-            <Menu theme="dark" mode="horizontal" defaultSelectedKeys={router.route != '/' ? [router.route.slice(1)] : 'home'}>
+            <Menu theme="dark" mode="horizontal" defaultSelectedKeys={router.route != '/' ? router.route.split("/")[1] : 'home'}>
                 {NAVBAR_MENU.map(menu => (
                     <Menu.Item key={menu.key}>
                         <Link href={menu.link}>

@@ -1,7 +1,7 @@
 import { Form, message } from 'antd';
-import ManageLayout from '@/comps/layouts/ManageLayout';
+import IndexPageLayout from '@/comps/layouts/IndexPageLayout';
 import useTranslation from 'next-translate/useTranslation';
-import CustomerTable from '@/comps/CustomerTable';
+import CustomerTable from '@/comps/table/CustomerTable';
 import CustomerModal from '@/comps/modals/CustomerModal';
 
 import axios from '@/plugins/axios.config';
@@ -88,7 +88,7 @@ const Customer = () => {
     }
 
     return (
-        <ManageLayout title={t('customer:title')} onSearch={onSearch} onCreate={showCreateModal}>
+        <IndexPageLayout title={t('customer:title')} onSearch={onSearch} onCreate={showCreateModal}>
             <CustomerTable ref={tableRef} onEdit={showEditModal} />
             <CustomerModal
                 form={form}
@@ -101,7 +101,7 @@ const Customer = () => {
                 imageUrl={imageUrl}
                 setImageUrl={setImageUrl}
             />
-        </ManageLayout >
+        </IndexPageLayout >
     )
 }
 

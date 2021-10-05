@@ -5,7 +5,7 @@ import useTranslation from 'next-translate/useTranslation';
 const { Search } = Input;
 
 
-const ManageLayout = ({ children, title, onSearch, onCreate }) => {
+const IndexPageLayout = ({ children, title, onSearch, onCreate }) => {
     let { t } = useTranslation();
     return (
         <>
@@ -28,4 +28,4 @@ const ManageLayout = ({ children, title, onSearch, onCreate }) => {
     )
 }
 
-export default ManageLayout;
+export default IndexPageLayout;
