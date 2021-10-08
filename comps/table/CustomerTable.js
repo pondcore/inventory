@@ -1,13 +1,12 @@
 import { Avatar, Button, Table, Space } from 'antd';
-import styles from './css/TABLE.module.css'
 import DeleteModal from '@/comps/modals/DeleteModal';
 import useTranslation from 'next-translate/useTranslation';
 
 import axios from '@/plugins/axios.config';
 import React, { useState, useEffect, useImperativeHandle } from 'react';
 
-
 const CustomerTable = ({ onEdit }, ref) => {
+    let { t } = useTranslation();
     const [customers, setCustomers] = useState([]);
     const [tableProps, setTableProps] = useState({
         loading: false,
@@ -16,7 +15,6 @@ const CustomerTable = ({ onEdit }, ref) => {
             pageSize: 10,
         },
     });
-    let { t } = useTranslation();
 
     const fetch = (params = {}) => {
         setTableProps({ ...tableProps, loading: true });
@@ -24,18 +22,30 @@ const CustomerTable = ({ onEdit }, ref) => {
             url: '/api/customer',
             method: 'get',
             type: 'json',
-        }).then(response => {
-            setCustomers(response.data.reverse());
+            params
+        }).then(({ data }) => {
+            let customerList = [];
+            data.customers.forEach((cus, index) => {
+                cus.addr.forEach((add) => {
+                    customerList.push({
+                        fullname: `${cus.prefix} ${cus.firstname} ${cus.lastname}`,
+                        image: cus.image,
+                        key: add._id,
+                        ...add
+                    })
+                })
+            });
+            setCustomers(customerList);
             setTableProps({
                 ...tableProps,
                 loading: false,
                 pagination: {
                     ...tableProps.pagination,
-                    total: response.data.length,
+                    total: data.total,
                 }
             });
         });
-    };
+    }
 
     useImperativeHandle(ref, () => ({
         fetch() {
@@ -49,7 +59,7 @@ const CustomerTable = ({ onEdit }, ref) => {
         <Space size="middle">
             <Button onClick={() => { onEdit(record.id, record.key) }}>{t('common:editButton')}</Button>
             <DeleteModal
-                deleteId={record.key}
+                deleteUrlId={`/api/customer/${record.key}`}
                 buttonText={t('common:deleteButton')}
                 handleConfirm={fetch}
                 title={t('common:deleteTitle', { text: t('customer:title') })}
@@ -110,8 +120,6 @@ const CustomerTable = ({ onEdit }, ref) => {
             render: manageColumns
         },
     ];
-
-
 
     return (
         <Table

@@ -1,13 +1,13 @@
 import { Form, message } from 'antd';
-import ManageLayout from '@/comps/layouts/ManageLayout';
+import IndexPageLayout from '@/comps/layouts/IndexPageLayout';
 import useTranslation from 'next-translate/useTranslation';
-import CustomerTable from '@/comps/CustomerTable';
+import CustomerTable from '@/comps/table/CustomerTable';
 import CustomerModal from '@/comps/modals/CustomerModal';
 
 import axios from '@/plugins/axios.config';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
-const Customer = () => {
+const Customer = ({ setBreadcrumb }) => {
     let { t } = useTranslation();
     const tableRef = useRef(null);
     const [isCreateVisible, setIsCreateVisible] = useState(false);
@@ -16,6 +16,13 @@ const Customer = () => {
     const [form] = Form.useForm();
     const [imageUrl, setImageUrl] = useState();
     const [modalType, setModalType] = useState('create');
+
+    useEffect(() => {
+        setBreadcrumb([{
+            path: '/customers',
+            name: t('customer:title')
+        }])
+    }, [])
 
     const onSearch = value => console.log(value);
     const showCreateModal = async () => {
@@ -88,7 +95,7 @@ const Customer = () => {
     }
 
     return (
-        <ManageLayout title={t('customer:title')} onSearch={onSearch} onCreate={showCreateModal}>
+        <IndexPageLayout title={t('customer:title')} onSearch={onSearch} onCreate={showCreateModal}>
             <CustomerTable ref={tableRef} onEdit={showEditModal} />
             <CustomerModal
                 form={form}
@@ -101,7 +108,7 @@ const Customer = () => {
                 imageUrl={imageUrl}
                 setImageUrl={setImageUrl}
             />
-        </ManageLayout >
+        </IndexPageLayout >
     )
 }
 

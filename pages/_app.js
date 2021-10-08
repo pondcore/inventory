@@ -1,6 +1,6 @@
 import '../styles/globals.css'
 import 'antd/dist/antd.css'
-import MyLayout from '../comps/MyLayout'
+import MainLayout from '../comps/layouts/MainLayout'
 import React, { useState, useEffect } from 'react';
 
 function useIsClient() {
@@ -12,12 +12,13 @@ function useIsClient() {
 }
 
 function MyApp({ Component, pageProps }) {
+  const [breadcrumb, setBreadcrumb] = useState([]);
   const isClient = useIsClient();
   return (
     <>{isClient &&
-      <MyLayout >
-        <Component {...pageProps} />
-      </MyLayout>
+      <MainLayout breadcrumb={breadcrumb}>
+        <Component {...pageProps} setBreadcrumb={setBreadcrumb} />
+      </MainLayout>
     }</>
   )
 }

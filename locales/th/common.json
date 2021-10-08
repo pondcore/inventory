@@ -1,5 +1,12 @@
 {
     "dashboard": "รายงาน",
+    "page": {
+        "customers": "จัดการลูกค้า",
+        "products": "จัดการสินค้า",
+        "orders": "จัดการออเดอร์",
+        "create": "เพิ่ม{{text}}",
+        "edit": "แก้ไข{{text}}"
+    },
     "manage_customer": "จัดการลูกค้า",
     "manage_product": "จัดการสินค้า",
     "manage_order": "จัดการออเดอร์",
@@ -16,6 +23,7 @@
         "submit": "บันทึก",
         "cancel": "ยกเลิก",
         "select_default": "กรุณาเลือก",
-        "confirm": "ยืนยัน"
+        "confirm": "ยืนยัน",
+        "select": "เลือก"
     }
 }

@@ -1,5 +1,12 @@
 {
     "dashboard": "Dashboard",
+    "page": {
+        "customers": "Manage Customer",
+        "products": "Manage Product",
+        "orders": "Manage Order",
+        "create": "Create {{text}}",
+        "edit": "Edit {{text}}"
+    },
     "manage_customer": "Manage Customer",
     "manage_product": "Manage Product",
     "manage_order": "Manage Order",
@@ -16,6 +23,7 @@
         "submit": "Submit",
         "cancel": "Cancel",
         "select_default": "Select a option",
-        "confirm": "Confirm"
+        "confirm": "Confirm",
+        "select": "Select"
     }
 }

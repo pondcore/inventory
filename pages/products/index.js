@@ -1,25 +1,65 @@
-import { Table, Tag, Space } from 'antd';
-import React, { useEffect } from 'react';
+import { Avatar, Button, Space, Form, message, Table } from 'antd';
+import IndexPageLayout from '@/comps/layouts/IndexPageLayout';
+import useTranslation from 'next-translate/useTranslation';
+import ProductModal from '@/comps/modals/ProductModal';
+import DeleteModal from '@/comps/modals/DeleteModal';
+
 import axios from "@/plugins/axios.config";
+import React, { useState, useRef, useEffect } from 'react';
 
-const Product = () => {
+const Product = ({ setBreadcrumb }) => {
+    let { t } = useTranslation();
+    const [isCreateVisible, setIsCreateVisible] = useState(false);
+    const [confirmLoading, setConfirmLoading] = useState(false);
+    const [loadingModal, setLoadingModal] = useState(false);
+    const [form] = Form.useForm();
+    const [imageUrl, setImageUrl] = useState();
+    const [modalType, setModalType] = useState('create');
+    const [products, setProducts] = useState([]);
+    const [tableProps, setTableProps] = useState({
+        loading: false,
+        pagination: {
+            current: 1,
+            pageSize: 10,
+        },
+    });
 
+    const fetch = (params = {}) => {
+        setTableProps({ ...tableProps, loading: true });
+        axios({
+            url: '/api/product',
+            method: 'get',
+            type: 'json',
+        }).then(({ data }) => {
+            setProducts(data.products);
+            setTableProps({
+                ...tableProps,
+                loading: false,
+                pagination: {
+                    ...tableProps.pagination,
+                    total: data.total,
+                }
+            });
+        });
+    };
     useEffect(() => {
-        axios
-            .get("/api/user")
-            .then(response => {
-                console.log("response: ", response)
-                // do something about response
-            })
-            .catch(err => {
-                console.error(err)
-            })
-    })
+        fetch({ pagination: tableProps.pagination });
+        setBreadcrumb([{
+            path: '/product',
+            name: t('product:title')
+        }])
+    }, []);
 
     const manageColumns = (text, record) => (
-        <Space size="middle">
-            <a>Edit</a>
-            <a>Delete</a>
+        <Space size="middle" >
+            <Button onClick={() => { showEditModal(record._id) }}>{t('common:editButton')}</Button>
+            <DeleteModal
+                deleteUrlId={`/api/product/${record._id}`}
+                buttonText={t('common:deleteButton')}
+                handleConfirm={fetch}
+                title={t('common:deleteTitle', { text: t('product:title') })}
+                content={t('common:deleteDescription', { text: t('product:title') })}
+            />
         </Space>
     );
 
@@ -27,11 +67,19 @@ const Product = () => {
         {
             title: 'รูป',
             dataIndex: 'image',
+            align: 'center',
             key: 'image',
+            render: function avatar(image) {
+                return (<Avatar
+                    size={64}
+                    src={image}
+                    alt=""
+                />)
+            }
         },
         {
-            title: 'ชื่อ',
-            dataIndex: 'name',
+            title: 'ชื่อสินค้า',
+            dataIndex: 'product_name',
             key: 'name',
         },
         {
@@ -50,65 +98,106 @@ const Product = () => {
             key: 'weight',
         },
         {
-            title: 'จำนวน',
+            title: 'สินค้าในคลัง',
             dataIndex: 'qty',
             key: 'qty',
         },
         {
             title: 'จัดการ',
             key: 'action',
+            align: 'center',
             render: manageColumns
         },
     ];
 
-    const dataSource = [
-        {
-            key: '1',
-            name: 'John Brown',
-            image: 32,
-            sku: '10203040',
-            price: 10,
-            weight: 20,
-            qty: 30
-        },
-        {
-            key: '2',
-            name: 'lorem',
-            image: 32,
-            sku: '10203040',
-            price: 10,
-            weight: 20,
-            qty: 30
-        }, {
-            key: '3',
-            name: 'ipsum',
-            image: 32,
-            sku: '10203040',
-            price: 10,
-            weight: 20,
-            qty: 30
-        },
-    ];
+    const onSearch = value => console.log(value);
+    const showCreateModal = async () => {
+        setModalType('create');
+        setIsCreateVisible(true);
+    };
 
-    // constructor = (props) => {
-    //     super(props);
+    const handleSubmit = (formType) => {
+        setConfirmLoading(true);
+        setLoadingModal(true)
+        let formData = {
+            ...form.getFieldsValue(),
+            image: imageUrl,
+        }
+        let url = formType == 'create' ? '/api/product' : `/api/product/${formData.productId}`;
+        axios({
+            method: formType == 'create' ? 'POST' : 'PUT',
+            url,
+            data: formData
+        }).then((response) => {
+            setIsCreateVisible(false);
+            setConfirmLoading(false);
+            setLoadingModal(false);
+            form.resetFields();
+            setImageUrl(null);
+            fetch();
+        }).catch(err => {
+            let errorMessage = typeof err.response !== "undefined" ? err.response.data.message : err.message;
+            setConfirmLoading(false);
+            setLoadingModal(false);
+            message.error(errorMessage);
+        })
+    };
 
-    //     this.state = {
-    //         data: [],
-    //         pagination: {
-    //             current: 1,
-    //             pageSize: 10,
-    //         },
-    //         loading: false,
-    //     };
-    // }
+    const handleClose = () => {
+        setIsCreateVisible(false);
+        setConfirmLoading(false);
+        setLoadingModal(false);
+        form.resetFields();
+        setImageUrl(null);
+    };
 
+    const showEditModal = (dataId) => {
+        setModalType('update');
+        setLoadingModal(true);
+        axios.get(`/api/product/${dataId}`).then(({ data }) => {
+            form.setFieldsValue({
+                productId: dataId,
+                product_name: data.product_name,
+                price: data.price,
+                qty: data.qty,
+                weight: data.weight,
+                sku: data.sku,
+                cost: data.cost,
+                vat: data.vat,
+            });
+            setImageUrl(data.image);
+            setLoadingModal(false);
+        }).catch(err => {
+            let errorMessage = typeof err.response !== "undefined" ? err.response.data.message : err.message;
+            setConfirmLoading(false);
+            message.error(errorMessage);
+        })
+
+        setIsCreateVisible(true);
+    }
 
     return (
-        <div>
-            <div className="page-header"><h1>จัดการสินค้า</h1></div>
-            <Table dataSource={dataSource} columns={columns} />
-        </div>
+        <IndexPageLayout title={t('product:title')} onSearch={onSearch} onCreate={showCreateModal}>
+            <Table
+                dataSource={products}
+                columns={columns}
+                tableLayout="auto"
+                pagination={tableProps.pagination}
+                loading={tableProps.loading}
+                rowKey='_id'
+            />
+            <ProductModal
+                form={form}
+                modalType={modalType}
+                visible={isCreateVisible}
+                onSubmit={handleSubmit}
+                onClose={handleClose}
+                loadingModal={loadingModal}
+                confirmLoading={confirmLoading}
+                imageUrl={imageUrl}
+                setImageUrl={setImageUrl}
+            />
+        </IndexPageLayout >
     )
 }
 

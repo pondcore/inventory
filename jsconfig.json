@@ -1,4 +1,3 @@
-
 {
   "compilerOptions": {
     "baseUrl": ".",
@@ -9,5 +8,5 @@
       "@/constants/*": ["assets/constants/*"],
       "@/helpers/*": ["assets/helpers/*"],
     }
-  }
+  },
 }

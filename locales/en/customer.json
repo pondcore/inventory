@@ -1,6 +1,5 @@
 {
     "title": "customer",
-    "search": "search",
     "form": {
         "prefix": "Prefix",
         "first_name": "Name",
@@ -11,7 +10,7 @@
         "province": "Province",
         "district": "District",
         "sub_district": "Sub-district",
-        "postcode": "Postal Code",
+        "postcode": "Postal code",
         "image": "Image",
         "image_upload_button": "Upload Image"
     }
