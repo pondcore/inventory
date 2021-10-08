@@ -12,11 +12,12 @@ function useIsClient() {
 }
 
 function MyApp({ Component, pageProps }) {
+  const [breadcrumb, setBreadcrumb] = useState([]);
   const isClient = useIsClient();
   return (
     <>{isClient &&
-      <MainLayout >
-        <Component {...pageProps} />
+      <MainLayout breadcrumb={breadcrumb}>
+        <Component {...pageProps} setBreadcrumb={setBreadcrumb} />
       </MainLayout>
     }</>
   )

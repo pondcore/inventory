@@ -4,13 +4,20 @@ import useTranslation from 'next-translate/useTranslation';
 import OrderTable from '@/comps/table/OrderTable';
 
 import axios from "@/plugins/axios.config";
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useRouter } from 'next/router'
 
-const Order = () => {
+const Order = ({ setBreadcrumb }) => {
     let { t } = useTranslation();
     const tableRef = useRef(null);
     const router = useRouter()
+
+    useEffect(() => {
+        setBreadcrumb([{
+            path: '/orders',
+            name: t('order:title')
+        }])
+    }, [])
 
     const onSearch = value => console.log(value);
     const openCreate = async () => {

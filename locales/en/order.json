@@ -14,7 +14,7 @@
         "customerProvince": "Province",
         "customerZipCode": "Postal code",
         "productName": "Product name",
-        "addProduct": "Add product",
+        "selectProduct": "Select product",
         "shippingCost": "Shipping cost",
         "discount": "Discount",
         "totalPrice": "Total price"
