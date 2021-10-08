@@ -22,18 +22,30 @@ const CustomerTable = ({ onEdit }, ref) => {
             url: '/api/customer',
             method: 'get',
             type: 'json',
-        }).then(response => {
-            setCustomers(response.data.reverse());
+            params
+        }).then(({ data }) => {
+            let customerList = [];
+            data.customers.forEach((cus, index) => {
+                cus.addr.forEach((add) => {
+                    customerList.push({
+                        fullname: `${cus.prefix} ${cus.firstname} ${cus.lastname}`,
+                        image: cus.image,
+                        key: add._id,
+                        ...add
+                    })
+                })
+            });
+            setCustomers(customerList);
             setTableProps({
                 ...tableProps,
                 loading: false,
                 pagination: {
                     ...tableProps.pagination,
-                    total: response.data.length,
+                    total: data.total,
                 }
             });
         });
-    };
+    }
 
     useImperativeHandle(ref, () => ({
         fetch() {

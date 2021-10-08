@@ -1,14 +1,13 @@
-import { Avatar, Button, Space, Form, message } from 'antd';
+import { Avatar, Button, Space, Form, message, Table } from 'antd';
 import IndexPageLayout from '@/comps/layouts/IndexPageLayout';
 import useTranslation from 'next-translate/useTranslation';
-import ProductTable from '@/comps/table/ProductTable';
 import ProductModal from '@/comps/modals/ProductModal';
 import DeleteModal from '@/comps/modals/DeleteModal';
 
 import axios from "@/plugins/axios.config";
 import React, { useState, useRef, useEffect } from 'react';
 
-const Product = () => {
+const Product = ({ setBreadcrumb }) => {
     let { t } = useTranslation();
     const [isCreateVisible, setIsCreateVisible] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
@@ -31,19 +30,25 @@ const Product = () => {
             url: '/api/product',
             method: 'get',
             type: 'json',
-        }).then(response => {
-            setProducts(response.data.reverse());
+        }).then(({ data }) => {
+            setProducts(data.products);
             setTableProps({
                 ...tableProps,
                 loading: false,
                 pagination: {
                     ...tableProps.pagination,
-                    total: response.data.length,
+                    total: data.total,
                 }
             });
         });
     };
-    useEffect(() => fetch({ pagination: tableProps.pagination }), []);
+    useEffect(() => {
+        fetch({ pagination: tableProps.pagination });
+        setBreadcrumb([{
+            path: '/product',
+            name: t('product:title')
+        }])
+    }, []);
 
     const manageColumns = (text, record) => (
         <Space size="middle" >
@@ -93,7 +98,7 @@ const Product = () => {
             key: 'weight',
         },
         {
-            title: 'จำนวน',
+            title: 'สินค้าในคลัง',
             dataIndex: 'qty',
             key: 'qty',
         },
@@ -173,7 +178,14 @@ const Product = () => {
 
     return (
         <IndexPageLayout title={t('product:title')} onSearch={onSearch} onCreate={showCreateModal}>
-            <ProductTable tableData={products} columns={columns} />
+            <Table
+                dataSource={products}
+                columns={columns}
+                tableLayout="auto"
+                pagination={tableProps.pagination}
+                loading={tableProps.loading}
+                rowKey='_id'
+            />
             <ProductModal
                 form={form}
                 modalType={modalType}
