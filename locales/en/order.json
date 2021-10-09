@@ -17,6 +17,8 @@
         "selectProduct": "Select product",
         "shippingCost": "Shipping cost",
         "discount": "Discount",
+        "paymentComplete": "Payment complete",
+        "paymentPending": "Payment pending",
         "totalPrice": "Total price"
     }
 }

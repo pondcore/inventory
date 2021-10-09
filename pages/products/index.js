@@ -1,11 +1,12 @@
-import { Avatar, Button, Space, Form, message, Table } from 'antd';
+import { Avatar, Button, Space, Form, message } from 'antd';
 import IndexPageLayout from '@/comps/layouts/IndexPageLayout';
 import useTranslation from 'next-translate/useTranslation';
 import ProductModal from '@/comps/modals/ProductModal';
 import DeleteModal from '@/comps/modals/DeleteModal';
+import MainAjaxTable from '@/comps/table/MainAjaxTable';
 
 import axios from "@/plugins/axios.config";
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const Product = ({ setBreadcrumb }) => {
     let { t } = useTranslation();
@@ -24,26 +25,28 @@ const Product = ({ setBreadcrumb }) => {
         },
     });
 
-    const fetch = (params = {}) => {
+    const fetch = async (params = {}) => {
         setTableProps({ ...tableProps, loading: true });
-        axios({
-            url: '/api/product',
+        return axios({
             method: 'get',
-            type: 'json',
+            url: '/api/product',
+            params: {
+                ...params.pagination,
+            }
         }).then(({ data }) => {
             setProducts(data.products);
             setTableProps({
                 ...tableProps,
                 loading: false,
                 pagination: {
-                    ...tableProps.pagination,
+                    ...data.pagination,
                     total: data.total,
                 }
             });
         });
     };
+
     useEffect(() => {
-        fetch({ pagination: tableProps.pagination });
         setBreadcrumb([{
             path: '/product',
             name: t('product:title')
@@ -80,7 +83,7 @@ const Product = ({ setBreadcrumb }) => {
         {
             title: 'ชื่อสินค้า',
             dataIndex: 'product_name',
-            key: 'name',
+            key: 'product_name',
         },
         {
             title: 'รหัส SKU',
@@ -104,6 +107,7 @@ const Product = ({ setBreadcrumb }) => {
         },
         {
             title: 'จัดการ',
+            width: '10%',
             key: 'action',
             align: 'center',
             render: manageColumns
@@ -134,7 +138,12 @@ const Product = ({ setBreadcrumb }) => {
             setLoadingModal(false);
             form.resetFields();
             setImageUrl(null);
-            fetch();
+            fetch({
+                pagination: {
+                    current: 1,
+                    pageSize: 10,
+                }
+            });
         }).catch(err => {
             let errorMessage = typeof err.response !== "undefined" ? err.response.data.message : err.message;
             setConfirmLoading(false);
@@ -175,16 +184,14 @@ const Product = ({ setBreadcrumb }) => {
 
         setIsCreateVisible(true);
     }
-
     return (
         <IndexPageLayout title={t('product:title')} onSearch={onSearch} onCreate={showCreateModal}>
-            <Table
+            <MainAjaxTable
+                fetchData={fetch}
                 dataSource={products}
                 columns={columns}
-                tableLayout="auto"
-                pagination={tableProps.pagination}
+                tablePagination={tableProps.pagination}
                 loading={tableProps.loading}
-                rowKey='_id'
             />
             <ProductModal
                 form={form}
