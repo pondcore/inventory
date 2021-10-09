@@ -1,8 +1,9 @@
-import { Modal, Row, Col, Table, Avatar, Typography } from 'antd';
+import { Modal, Row, Col, Avatar, Typography } from 'antd';
 import useTranslation from 'next-translate/useTranslation';
+import MainAjaxTable from '@/comps/table/MainAjaxTable';
 
 import axios from "@/plugins/axios.config";
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 const { Text } = Typography;
 const SelectProductModal = ({ visible, onClose, orderProducts, setProducts, calculatePrice }) => {
@@ -71,11 +72,6 @@ const SelectProductModal = ({ visible, onClose, orderProducts, setProducts, calc
         },
     });
 
-    const handleTableChange = (pagination) => {
-        fetch({ pagination });
-    };
-
-
     const fetch = async (params = {}) => {
         setTableProps({ ...tableProps, loading: true });
         return axios({
@@ -97,10 +93,6 @@ const SelectProductModal = ({ visible, onClose, orderProducts, setProducts, calc
         });
     }
 
-    useEffect(() => {
-        fetch({ pagination: tableProps.pagination });
-    }, []);
-
     return (<Modal
         centered
         title={t('order:form.productList')}
@@ -112,17 +104,15 @@ const SelectProductModal = ({ visible, onClose, orderProducts, setProducts, calc
     >
         <Row gutter={16}>
             <Col span={24}>
-                <Table
+                <MainAjaxTable
                     rowSelection={{
                         ...rowSelection,
                     }}
+                    fetchData={fetch}
                     dataSource={productList}
                     columns={columns}
-                    pagination={tableProps.pagination}
+                    tablePagination={tableProps.pagination}
                     loading={tableProps.loading}
-                    onChange={handleTableChange}
-                    tableLayout="auto"
-                    rowKey="_id"
                 />
             </Col>
         </Row>

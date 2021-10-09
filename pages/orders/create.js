@@ -1,4 +1,4 @@
-import { Row, Col, Form, Input, Select, Spin, InputNumber, Card, Typography, Button, Avatar, Table } from 'antd';
+import { Row, Col, Form, Input, Radio, Spin, InputNumber, Card, Typography, Button, Avatar, Table, Space, message } from 'antd';
 import ManagePageLayout from '@/comps/layouts/ManagePageLayout';
 import useTranslation from 'next-translate/useTranslation';
 import AutocompleteInput from '@/comps/forms/AutocompleteInput'
@@ -6,7 +6,7 @@ import SelectProductModal from '@/comps/modals/SelectProductModal'
 
 import React, { useState, useEffect } from 'react';
 import axios from '@/plugins/axios.config';
-import { FormProvider } from 'rc-field-form';
+import router from 'next/router';
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -17,6 +17,7 @@ const CreateOrder = ({ setBreadcrumb }) => {
     const [productList, setProductList] = useState([]);
     const [orderTotalPrice, setOrderTotalPrice] = useState(0);
     const [visibleProductModal, setVisibleProductModal] = useState(false);
+    const [loadingSubmit, setLoadingSubmit] = useState(false);
 
     const amountChange = (recordId, value) => {
         let temp = [];
@@ -25,7 +26,7 @@ const CreateOrder = ({ setBreadcrumb }) => {
         })
         temp.forEach((prod, index) => {
             if (prod._id == recordId) {
-                temp[index].amount = value;
+                temp[index].amount = parseInt(value);
             }
         })
         calculateOrderPrice(temp);
@@ -98,12 +99,11 @@ const CreateOrder = ({ setBreadcrumb }) => {
             type: 'json',
         }).then(({ data }) => {
             form.setFieldsValue({
+                customerId: data._id,
                 phone: data.phone,
+                addrId: data.addr[0]._id,
                 address: data.addr[0].description,
-                province_name: data.addr[0].province_name,
-                amphur_name: data.addr[0].amphur_name,
-                tambon_name: data.addr[0].tambon_name,
-                post_code: data.addr[0].post_code,
+                ...data.addr[0]
             })
             setLoadCustomerInfo(false);
         });
@@ -127,13 +127,35 @@ const CreateOrder = ({ setBreadcrumb }) => {
 
     const calculateOrderPrice = (newOrderProduct = undefined) => {
         let currProduct = newOrderProduct === undefined ? productList : newOrderProduct;
-        let productSum = currProduct.reduce((acc, cur) => { return acc + (parseFloat(cur.price) * parseFloat(cur.amount)) }, 0);
+        let productSum = currProduct.reduce((acc, cur) => { return acc + (parseFloat(cur.price) * parseInt(cur.amount)) }, 0);
         let { shippingCost, discount } = form.getFieldsValue(['shippingCost', 'discount'])
         setOrderTotalPrice(productSum + parseFloat(shippingCost || 0) - parseFloat(discount || 0));
     }
 
-    const onSubmitOrder = () => {
-        console.log(productList);
+    const onSubmitOrder = async () => {
+        setLoadingSubmit(true);
+        let formData = form.getFieldsValue();
+        console.log(formData);
+        formData['totalCost'] = orderTotalPrice - parseFloat(formData.discount || 0);
+        formData['totalWeight'] = productList.reduce((acc, cur) => { return acc + (parseFloat(cur.weight) * parseInt(cur.amount)) }, 0);
+        formData['totalPrice'] = orderTotalPrice;
+        formData['products'] = productList.map(prod => {
+            return { id: prod._id, amount: prod.amount }
+        })
+        axios({
+            method: 'post',
+            url: '/api/order',
+            data: formData,
+        }).then(({ data }) => {
+            setLoadingSubmit(false);
+            if (data.success) {
+                router.push('/orders')
+            }
+        }).catch(err => {
+            let errorMessage = typeof err.response !== "undefined" ? err.response.data.message : err.message;
+            message.error(errorMessage);
+            setLoadingSubmit(false);
+        });
     }
 
     return (
@@ -166,6 +188,12 @@ const CreateOrder = ({ setBreadcrumb }) => {
                                             fetchOptions={fetchCustomerList}
                                             placeholder="ชื่อ สกุล"
                                         />
+                                    </Form.Item>
+                                    <Form.Item name="customerId" noStyle>
+                                        <Input type="hidden" />
+                                    </Form.Item>
+                                    <Form.Item name="addrId" noStyle>
+                                        <Input type="hidden" />
                                     </Form.Item>
                                 </Col>
                                 <Col xs={24} md={8}>
@@ -319,6 +347,19 @@ const CreateOrder = ({ setBreadcrumb }) => {
                             </Col>
                         </Row>
                         <Row gutter={16} justify="end">
+                            <Col xs={24} sm={8} md={6} style={{ display: 'flex', justifyContent: 'right' }}>
+                                <Form.Item
+                                    name="isPaid"
+                                    initialValue="1"
+                                >
+                                    <Radio.Group>
+                                        <Space direction="vertical">
+                                            <Radio value="1" checked>{t('order:form.paymentComplete')}</Radio>
+                                            <Radio value="2">{t('order:form.paymentPending')}</Radio>
+                                        </Space>
+                                    </Radio.Group>
+                                </Form.Item>
+                            </Col>
                             <Col xs={24} sm={8} md={6} style={{ display: 'flex', justifyContent: 'space-between' }}>
                                 <div>
                                     <Title level={4}>{t('order:form.totalPrice')}</Title>
@@ -331,7 +372,7 @@ const CreateOrder = ({ setBreadcrumb }) => {
                     </div>
                     <Row justify="end">
                         <Col>
-                            <Button type="primary" size="large" onClick={onSubmitOrder}>{t('common:form.submit')}</Button>
+                            <Button type="primary" size="large" onClick={onSubmitOrder} loading={loadingSubmit}>{t('common:form.submit')}</Button>
                         </Col>
                     </Row>
                 </Form>
