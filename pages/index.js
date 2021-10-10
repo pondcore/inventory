@@ -3,7 +3,9 @@ import { useRouter } from 'next/router';
 const Home = () => {
   const router = useRouter()
   return (
-    <div>locales {router.locale}</div>
+    <div>locales {router.locale}
+
+    </div>
   );
 }
 
