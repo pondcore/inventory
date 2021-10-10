@@ -3,12 +3,13 @@ import useTranslation from 'next-translate/useTranslation';
 import MainAjaxTable from '@/comps/table/MainAjaxTable';
 
 import axios from "@/plugins/axios.config";
-import React, { useState } from 'react';
+import React, { useState, useImperativeHandle } from 'react';
 
 const { Text } = Typography;
-const SelectProductModal = ({ visible, onClose, orderProducts, setProducts, calculatePrice }) => {
+const SelectProductModal = ({ visible, onClose, orderProducts, setProducts, calculatePrice }, ref) => {
     let { t } = useTranslation();
     const [productList, setProductList] = useState([]);
+    const [selectedRowKeys, setSelectedRowKeys] = useState([])
     const columns = [
         {
             title: 'รูป',
@@ -49,12 +50,23 @@ const SelectProductModal = ({ visible, onClose, orderProducts, setProducts, calc
         },
     ]
 
+    useImperativeHandle(ref, () => ({
+        setSelectedProductKeys: setSelectedRowKeys
+    }), [])
+
+    const onSelectChange = selectedRowKeys => {
+        setSelectedRowKeys(selectedRowKeys);
+    };
+
     const rowSelection = {
+        selectedRowKeys: selectedRowKeys,
+        onChange: onSelectChange,
         onSelect: (record, selected) => {
             let newOrderProduct = (selected) ? [...orderProducts, { ...record, amount: 1 }] :
                 orderProducts.filter(item => item._id != record._id);
             calculatePrice(newOrderProduct);
             setProducts(newOrderProduct);
+            setSelectedRowKeys()
         },
         getCheckboxProps: (record) => ({
             disabled: record.qty == 0,
@@ -119,4 +131,4 @@ const SelectProductModal = ({ visible, onClose, orderProducts, setProducts, calc
     </Modal >);
 }
 
-export default SelectProductModal;
+export default React.forwardRef(SelectProductModal);
