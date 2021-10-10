@@ -1,14 +1,14 @@
 import { Avatar, Button, Space, Form, message } from 'antd';
 import IndexPageLayout from '@/comps/layouts/IndexPageLayout';
 import useTranslation from 'next-translate/useTranslation';
-import ProductTable from '@/comps/table/ProductTable';
 import ProductModal from '@/comps/modals/ProductModal';
 import DeleteModal from '@/comps/modals/DeleteModal';
+import MainAjaxTable from '@/comps/table/MainAjaxTable';
 
 import axios from "@/plugins/axios.config";
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const Product = () => {
+const Product = ({ setBreadcrumb }) => {
     let { t } = useTranslation();
     const [isCreateVisible, setIsCreateVisible] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
@@ -25,25 +25,33 @@ const Product = () => {
         },
     });
 
-    const fetch = (params = {}) => {
+    const fetch = async (params = {}) => {
         setTableProps({ ...tableProps, loading: true });
-        axios({
-            url: '/api/product',
+        return axios({
             method: 'get',
-            type: 'json',
-        }).then(response => {
-            setProducts(response.data.reverse());
+            url: '/api/product',
+            params: {
+                ...params.pagination,
+            }
+        }).then(({ data }) => {
+            setProducts(data.products);
             setTableProps({
                 ...tableProps,
                 loading: false,
                 pagination: {
-                    ...tableProps.pagination,
-                    total: response.data.length,
+                    ...data.pagination,
+                    total: data.total,
                 }
             });
         });
     };
-    useEffect(() => fetch({ pagination: tableProps.pagination }), []);
+
+    useEffect(() => {
+        setBreadcrumb([{
+            path: '/product',
+            name: t('product:title')
+        }])
+    }, []);
 
     const manageColumns = (text, record) => (
         <Space size="middle" >
@@ -75,7 +83,7 @@ const Product = () => {
         {
             title: 'ชื่อสินค้า',
             dataIndex: 'product_name',
-            key: 'name',
+            key: 'product_name',
         },
         {
             title: 'รหัส SKU',
@@ -93,12 +101,13 @@ const Product = () => {
             key: 'weight',
         },
         {
-            title: 'จำนวน',
+            title: 'สินค้าในคลัง',
             dataIndex: 'qty',
             key: 'qty',
         },
         {
             title: 'จัดการ',
+            width: '10%',
             key: 'action',
             align: 'center',
             render: manageColumns
@@ -129,7 +138,12 @@ const Product = () => {
             setLoadingModal(false);
             form.resetFields();
             setImageUrl(null);
-            fetch();
+            fetch({
+                pagination: {
+                    current: 1,
+                    pageSize: 10,
+                }
+            });
         }).catch(err => {
             let errorMessage = typeof err.response !== "undefined" ? err.response.data.message : err.message;
             setConfirmLoading(false);
@@ -170,10 +184,15 @@ const Product = () => {
 
         setIsCreateVisible(true);
     }
-
     return (
         <IndexPageLayout title={t('product:title')} onSearch={onSearch} onCreate={showCreateModal}>
-            <ProductTable tableData={products} columns={columns} />
+            <MainAjaxTable
+                fetchData={fetch}
+                dataSource={products}
+                columns={columns}
+                tablePagination={tableProps.pagination}
+                loading={tableProps.loading}
+            />
             <ProductModal
                 form={form}
                 modalType={modalType}

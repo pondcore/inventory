@@ -14,9 +14,11 @@
         "customerProvince": "จังหวัด",
         "customerZipCode": "รหัสไปรษณีย์",
         "productName": "ชื่อสินค้า",
-        "addProduct": "เพิ่มสินค้า",
+        "selectProduct": "เลือกสินค้า",
         "shippingCost": "ค่าส่ง",
         "discount": "ส่วนลด",
+        "paymentComplete": "ชำระเงินแล้ว",
+        "paymentPending": "รอการชำระเงิน",
         "totalPrice": "ยอดรวม"
     }
 }

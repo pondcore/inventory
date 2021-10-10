@@ -5,9 +5,9 @@ import CustomerTable from '@/comps/table/CustomerTable';
 import CustomerModal from '@/comps/modals/CustomerModal';
 
 import axios from '@/plugins/axios.config';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
-const Customer = () => {
+const Customer = ({ setBreadcrumb }) => {
     let { t } = useTranslation();
     const tableRef = useRef(null);
     const [isCreateVisible, setIsCreateVisible] = useState(false);
@@ -16,6 +16,13 @@ const Customer = () => {
     const [form] = Form.useForm();
     const [imageUrl, setImageUrl] = useState();
     const [modalType, setModalType] = useState('create');
+
+    useEffect(() => {
+        setBreadcrumb([{
+            path: '/customers',
+            name: t('customer:title')
+        }])
+    }, [])
 
     const onSearch = value => console.log(value);
     const showCreateModal = async () => {
