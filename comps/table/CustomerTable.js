@@ -26,12 +26,13 @@ const CustomerTable = ({ onEdit }, ref) => {
         }).then(({ data }) => {
             let customerList = [];
             data.customers.forEach((cus, index) => {
-                cus.addr.forEach((add) => {
+                cus.addr.forEach((addr) => {
                     customerList.push({
                         fullname: `${cus.prefix} ${cus.firstname} ${cus.lastname}`,
                         image: cus.image,
-                        key: add._id,
-                        ...add
+                        id: cus._id,
+                        key: addr._id,
+                        ...addr
                     })
                 })
             });

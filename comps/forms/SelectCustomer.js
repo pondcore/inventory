@@ -1,5 +1,5 @@
 import React, { useState, useImperativeHandle } from 'react';
-import { Row, Col, Form, Input, Spin } from 'antd';
+import { Row, Col, Form, Input, Spin, Button } from 'antd';
 import AutocompleteInput from './AutocompleteInput';
 import useTranslation from 'next-translate/useTranslation';
 import axios from '@/plugins/axios.config';
@@ -98,6 +98,14 @@ function SelectCustomer({ form, defaultLoading = false }, ref) {
                     >
                         <Input maxLength={10} />
                     </Form.Item>
+                </Col>
+            </Row>
+            <Row gutter={16} style={{ marginBottom: '1rem', display: 'none' }}>
+                <Col xs={6} md={4} lg={2}>
+                    <Button type="primary" disabled>แก้ไขที่อยู่</Button>
+                </Col>
+                <Col xs={6} md={4} lg={2}>
+                    <Button type="primary" disabled>กรอกที่อยู่ใหม่</Button>
                 </Col>
             </Row>
             <Row>

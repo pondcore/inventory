@@ -24,14 +24,16 @@ const Product = ({ setBreadcrumb }) => {
             pageSize: 10,
         },
     });
+    const [searchKey, setSearchKey] = useState(null);
 
-    const fetch = async (params = {}) => {
+    const fetch = async (params = {}, search = null) => {
         setTableProps({ ...tableProps, loading: true });
         return axios({
             method: 'get',
             url: '/api/product',
             params: {
                 ...params.pagination,
+                q: search ? search : searchKey,
             }
         }).then(({ data }) => {
             setProducts(data.products);
@@ -114,7 +116,15 @@ const Product = ({ setBreadcrumb }) => {
         },
     ];
 
-    const onSearch = value => console.log(value);
+    const onSearch = (value) => {
+        setSearchKey(value);
+        fetch({
+            pagination: {
+                current: 1,
+                pageSize: 10,
+            }
+        }, value)
+    };
     const showCreateModal = async () => {
         setModalType('create');
         setIsCreateVisible(true);
@@ -185,7 +195,11 @@ const Product = ({ setBreadcrumb }) => {
         setIsCreateVisible(true);
     }
     return (
-        <IndexPageLayout title={t('product:title')} onSearch={onSearch} onCreate={showCreateModal}>
+        <IndexPageLayout
+            title={t('product:title')}
+            onSearch={onSearch}
+            onCreate={showCreateModal}
+        >
             <MainAjaxTable
                 fetchData={fetch}
                 dataSource={products}

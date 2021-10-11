@@ -68,7 +68,8 @@ const Customer = ({ setBreadcrumb }) => {
     const showEditModal = (dataId, addrKey) => {
         setModalType('update');
         setLoadingModal(true);
-        axios.get(`/api/customer/${addrKey}`).then(({ data }) => {
+        axios.get(`/api/customer/${dataId}`).then(({ data }) => {
+            console.log(data);
             const addrData = data.addr.find(item => item._id === addrKey)
             form.setFieldsValue({
                 id: dataId,

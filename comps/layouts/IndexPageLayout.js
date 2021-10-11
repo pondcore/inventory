@@ -14,7 +14,16 @@ const IndexPageLayout = ({ children, title, onSearch, onCreate }) => {
             </Head>
             <Row>
                 <Col span="12">
-                    <Search size="large" placeholder={t('common:search_input', { text: title })} allowClear onSearch={onSearch} style={{ width: 300 }} />
+                    <Search
+                        size="large"
+                        placeholder={t('common:search_input', { text: title })}
+                        allowClear
+                        onSearch={onSearch}
+                        style={{
+                            width: 300,
+                            display: 'none'
+                        }}
+                    />
                 </Col>
                 <Col span="12" style={{ textAlign: 'right' }}>
                     <Button size={"large"} type="primary" onClick={onCreate}>
