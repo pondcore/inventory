@@ -14,6 +14,7 @@ const CreateOrder = ({ setBreadcrumb }) => {
     let { t } = useTranslation();
     const [form] = Form.useForm();
     const orderRef = useRef(null);
+    const customerRef = useRef(null);
 
     useEffect(() => {
         setBreadcrumb([{
@@ -30,7 +31,7 @@ const CreateOrder = ({ setBreadcrumb }) => {
         form.validateFields().then(async (values) => {
             let formData = values;
             console.log(formData);
-            formData['totalCost'] = productCost + orderShippingCost;
+            formData['totalCost'] = productList.reduce((acc, cur) => { return acc + (parseFloat(cur.cost) * parseInt(cur.amount)) }, 0);
             formData['totalWeight'] = productList.reduce((acc, cur) => { return acc + (parseFloat(cur.weight) * parseInt(cur.amount)) }, 0);
             formData['totalPrice'] = productCost + orderShippingCost - orderDiscount;
             formData['products'] = productList.map(prod => {
@@ -41,10 +42,10 @@ const CreateOrder = ({ setBreadcrumb }) => {
                 url: '/api/order',
                 data: formData,
             }).then(({ data }) => {
-                orderRef.current.setSubmit(false);
                 if (data.success) {
                     router.push('/orders')
                 }
+                orderRef.current.setSubmit(false);
             }).catch(err => {
                 let errorMessage = typeof err.response !== "undefined" ? err.response.data.message : err.message;
                 message.error(errorMessage);
@@ -72,7 +73,7 @@ const CreateOrder = ({ setBreadcrumb }) => {
                 >
                     <Title level={3}>{t('order:form.customerInfo')}</Title>
                     <div style={{ marginLeft: '2rem' }}>
-                        <SelectCustomer form={form} />
+                        <SelectCustomer ref={customerRef} form={form} />
                     </div>
                     <Row style={{ marginTop: '2rem' }} justify="space-between">
                         <Col xs={12} md={16}>

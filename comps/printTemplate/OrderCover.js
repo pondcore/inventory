@@ -8,6 +8,11 @@ export default class OrderCover extends Component {
         const products = order.products.map(item => {
             return { amount: item.amount, ...item.id }
         })
+
+        let prodCost = products.reduce((acc, cur) => {
+            return acc + (cur.amount * cur.price);
+        }, 0)
+        let discount = prodCost - (order.total_price - order.shipping_cost)
         const columns = [
             {
                 title: 'ลำดับ',
@@ -61,13 +66,13 @@ export default class OrderCover extends Component {
                     </div>
                 </Col>
             </Row>
-            <Row justify="end" style={{ display: (order.total_cost - order.total_price > 0) ? 'flex' : 'none' }}>
+            <Row justify="end" style={{ display: (discount > 0) ? 'flex' : 'none' }}>
                 <Col xs={24} sm={5} md={4} style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <div style={{ textAlign: 'right', width: '100px' }}>
                         <h4>ส่วนลด</h4>
                     </div>
                     <div>
-                        <h4>฿{order.total_cost - order.total_price}</h4>
+                        <h4>฿{discount}</h4>
                     </div>
                 </Col>
             </Row>

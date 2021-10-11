@@ -30,6 +30,10 @@ function EditOrder({ setBreadcrumb }) {
     const fetch = async () => {
         axios.get(`/api/order/${router.query.orderId}`).then(({ data }) => {
             let customer = data.customer_id;
+            let prodCost = data.products.reduce((acc, cur) => {
+                return acc + (cur.amount * cur.id.price);
+            }, 0)
+            console.log('data prod', data.products);
             form.setFieldsValue({
                 customerName: {
                     value: customer._id,
@@ -41,7 +45,7 @@ function EditOrder({ setBreadcrumb }) {
                 addrId: customer.addr[0]._id,
                 address: customer.addr[0].description,
                 ...customer.addr[0],
-                discount: data.total_cost - data.total_price,
+                discount: prodCost - (data.total_price - data.shipping_cost),
                 shippingCost: data.shipping_cost,
                 isPaid: data.payment_status === 'paid' ? '1' : '2'
             })
@@ -52,9 +56,10 @@ function EditOrder({ setBreadcrumb }) {
             orderRef.current.setSelectedProductKeys(data.products.map(item => {
                 return item.id._id
             }));
-            orderRef.current.setProductCost(data.total_cost - data.shipping_cost);
+
+            orderRef.current.setProductCost(prodCost);
             orderRef.current.setOrderShippingCost(data.shipping_cost);
-            orderRef.current.setOrderDiscount(data.total_cost - data.total_price);
+            orderRef.current.setOrderDiscount(prodCost - (data.total_price - data.shipping_cost));
         })
     }
 
@@ -63,7 +68,7 @@ function EditOrder({ setBreadcrumb }) {
         form.validateFields().then(async (values) => {
             let formData = values;
             console.log(formData);
-            formData['totalCost'] = productCost + orderShippingCost;
+            formData['totalCost'] = productList.reduce((acc, cur) => { return acc + (parseFloat(cur.cost) * parseInt(cur.amount)) }, 0);
             formData['totalWeight'] = productList.reduce((acc, cur) => { return acc + (parseFloat(cur.weight) * parseInt(cur.amount)) }, 0);
             formData['totalPrice'] = productCost + orderShippingCost - orderDiscount;
             formData['products'] = productList.map(prod => {
@@ -74,10 +79,10 @@ function EditOrder({ setBreadcrumb }) {
                 url: `/api/order/${router.query.orderId}`,
                 data: formData,
             }).then(({ data }) => {
-                orderRef.current.setSubmit(false);
                 if (data.success) {
                     router.push('/orders')
                 }
+                orderRef.current.setSubmit(false);
             }).catch(err => {
                 let errorMessage = typeof err.response !== "undefined" ? err.response.data.message : err.message;
                 message.error(errorMessage);
@@ -105,7 +110,7 @@ function EditOrder({ setBreadcrumb }) {
                 >
                     <Title level={3}>{t('order:form.customerInfo')}</Title>
                     <div style={{ marginLeft: '2rem' }}>
-                        <SelectCustomer ref={customerRef} form={form} />
+                        <SelectCustomer ref={customerRef} form={form} defaultLoading={true} />
                     </div>
                     <Row style={{ marginTop: '2rem' }} justify="space-between">
                         <Col xs={12} md={16}>

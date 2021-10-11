@@ -6,10 +6,10 @@ import axios from '@/plugins/axios.config';
 
 const { TextArea } = Input;
 
-function SelectCustomer({ form }, ref) {
+function SelectCustomer({ form, defaultLoading = false }, ref) {
     let { t } = useTranslation();
     const [customer, setCustomer] = useState([]);
-    const [loadCustomerInfo, setLoadCustomerInfo] = useState(true);
+    const [loadCustomerInfo, setLoadCustomerInfo] = useState(defaultLoading);
     const fetchCustomerList = async (name) => {
         return axios({
             method: 'get',
