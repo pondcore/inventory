@@ -4,14 +4,16 @@ import IndexPageLayout from '@/comps/layouts/IndexPageLayout';
 import useTranslation from 'next-translate/useTranslation';
 import MainAjaxTable from '@/comps/table/MainAjaxTable';
 
+
 import axios from "@/plugins/axios.config";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/router'
 
 const Order = ({ setBreadcrumb }) => {
     let { t } = useTranslation();
     const router = useRouter()
     const [orders, setOrders] = useState([]);
+
     const [tableProps, setTableProps] = useState({
         loading: false,
         pagination: {
@@ -22,13 +24,13 @@ const Order = ({ setBreadcrumb }) => {
 
     const manageColumns = (text, record) => (
         <Space size="middle">
-            <Button onClick={() => { openEdit(record._id) }}>{t('common:editButton')}</Button>
+            <Button onClick={() => { openEdit(text) }}>{t('common:editButton')}</Button>
         </Space>
     );
 
     const coverColumns = (text, record) => (
         <Space size="middle">
-            <Button type="primary" onClick={() => { console.log(record._id); }}>{t('order:table.printButton')}</Button>
+            <Button type="primary" onClick={() => router.push(`/orders/${text}/print`)}>{t('order:table.printButton')}</Button>
         </Space>
     );
 
@@ -67,7 +69,8 @@ const Order = ({ setBreadcrumb }) => {
         },
         {
             title: 'ใบแปะหน้า',
-            key: 'printCover',
+            dataIndex: '_id',
+            key: '_id',
             align: 'center',
             render: coverColumns
         },
@@ -80,7 +83,8 @@ const Order = ({ setBreadcrumb }) => {
         {
             title: 'จัดการ',
             width: '10%',
-            key: 'action',
+            dataIndex: '_id',
+            key: '_id',
             align: 'center',
             render: manageColumns
         },
@@ -88,6 +92,7 @@ const Order = ({ setBreadcrumb }) => {
 
     const productTableRender = (record) => (
         <Table
+            rowKey="_id"
             pagination={false}
             bordered
             dataSource={record.products}
@@ -138,7 +143,7 @@ const Order = ({ setBreadcrumb }) => {
                 ...params.pagination,
             }
         }).then(({ data }) => {
-            let tempOrder = data.orders;
+            let tempOrder = data.orders ? data.orders : [];
             tempOrder.forEach((item, index) => {
                 item.products.forEach((prod, inx) => {
                     tempOrder[index].products[inx] = {
@@ -187,6 +192,7 @@ const Order = ({ setBreadcrumb }) => {
                 }}
 
             />
+
         </IndexPageLayout >
     )
 }

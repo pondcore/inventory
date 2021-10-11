@@ -11,6 +11,7 @@
     "manage_product": "จัดการสินค้า",
     "manage_order": "จัดการออเดอร์",
     "page_title": "ระบบจัดการ{{text}}",
+    "printTitle": "ปริ้น{{text}}",
     "createTitle": "เพิ่ม{{text}}",
     "createButton": "เพิ่ม{{text}}",
     "editTitle": "แก้ไข{{text}}",

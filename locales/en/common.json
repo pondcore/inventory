@@ -11,6 +11,7 @@
     "manage_product": "Manage Product",
     "manage_order": "Manage Order",
     "page_title": "Manage {{text}}",
+    "printTitle": "Print {{text}}",
     "createTitle": "Create {{text}}",
     "createButton": "Create {{text}}",
     "editTitle": "Edit {{text}}",
