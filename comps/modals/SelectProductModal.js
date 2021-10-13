@@ -1,15 +1,37 @@
-import { Modal, Row, Col, Avatar, Typography } from 'antd';
+import { Modal, Row, Col, Avatar, Typography, Input } from 'antd';
 import useTranslation from 'next-translate/useTranslation';
 import MainAjaxTable from '@/comps/table/MainAjaxTable';
 
 import axios from "@/plugins/axios.config";
-import React, { useState, useImperativeHandle } from 'react';
+import React, { useState, useImperativeHandle, useEffect } from 'react';
 
+const { Search } = Input;
 const { Text } = Typography;
 const SelectProductModal = ({ visible, onClose, orderProducts, setProducts, calculatePrice }, ref) => {
     let { t } = useTranslation();
     const [productList, setProductList] = useState([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState([])
+    const DEFAULT_DATA = {
+        pagination: {
+            current: 1,
+            pageSize: 4,
+        }
+    }
+    const [tableProps, setTableProps] = useState({
+        loading: false,
+        pagination: {
+            ...DEFAULT_DATA.pagination
+        },
+    });
+    const [searchKey, setSearchKey] = useState(null);
+    useEffect(() => {
+        fetch({
+            pagination: {
+                ...DEFAULT_DATA.pagination
+            },
+        })
+    }, [searchKey])
+
     const columns = [
         {
             title: 'รูป',
@@ -76,14 +98,6 @@ const SelectProductModal = ({ visible, onClose, orderProducts, setProducts, calc
         hideSelectAll: true
     };
 
-    const [tableProps, setTableProps] = useState({
-        loading: false,
-        pagination: {
-            current: 1,
-            pageSize: 4,
-        },
-    });
-
     const fetch = async (params = {}) => {
         setTableProps({ ...tableProps, loading: true });
         return axios({
@@ -91,6 +105,7 @@ const SelectProductModal = ({ visible, onClose, orderProducts, setProducts, calc
             url: `/api/product`,
             params: {
                 ...params.pagination,
+                q: searchKey,
             }
         }).then(({ data }) => {
             setProductList(data.products);
@@ -105,6 +120,8 @@ const SelectProductModal = ({ visible, onClose, orderProducts, setProducts, calc
         });
     }
 
+
+
     return (<Modal
         centered
         title={t('order:form.productList')}
@@ -114,6 +131,19 @@ const SelectProductModal = ({ visible, onClose, orderProducts, setProducts, calc
         forceRender
         footer={null}
     >
+        <Row style={{ marginBottom: '1rem' }}>
+            <Col span={24}>
+                <Search
+                    size="large"
+                    placeholder={t('common:search_input', { text: t('product:title') })}
+                    allowClear
+                    onSearch={(value) => setSearchKey(value)}
+                    style={{
+                        width: 300,
+                    }}
+                />
+            </Col>
+        </Row>
         <Row gutter={16}>
             <Col span={24}>
                 <MainAjaxTable

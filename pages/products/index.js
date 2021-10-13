@@ -4,6 +4,7 @@ import useTranslation from 'next-translate/useTranslation';
 import ProductModal from '@/comps/modals/ProductModal';
 import DeleteModal from '@/comps/modals/DeleteModal';
 import MainAjaxTable from '@/comps/table/MainAjaxTable';
+import DEFAULT_DATA from '@/constants/dataTable';
 
 import axios from "@/plugins/axios.config";
 import React, { useState, useEffect } from 'react';
@@ -20,20 +21,26 @@ const Product = ({ setBreadcrumb }) => {
     const [tableProps, setTableProps] = useState({
         loading: false,
         pagination: {
-            current: 1,
-            pageSize: 10,
+            ...DEFAULT_DATA.pagination
         },
     });
     const [searchKey, setSearchKey] = useState(null);
+    useEffect(() => {
+        fetch({
+            pagination: {
+                ...DEFAULT_DATA.pagination
+            },
+        })
+    }, [searchKey])
 
-    const fetch = async (params = {}, search = null) => {
+    const fetch = async (params = {}) => {
         setTableProps({ ...tableProps, loading: true });
         return axios({
             method: 'get',
             url: '/api/product',
             params: {
                 ...params.pagination,
-                q: search ? search : searchKey,
+                q: searchKey,
             }
         }).then(({ data }) => {
             setProducts(data.products);
@@ -116,15 +123,6 @@ const Product = ({ setBreadcrumb }) => {
         },
     ];
 
-    const onSearch = (value) => {
-        setSearchKey(value);
-        fetch({
-            pagination: {
-                current: 1,
-                pageSize: 10,
-            }
-        }, value)
-    };
     const showCreateModal = async () => {
         setModalType('create');
         setIsCreateVisible(true);
@@ -150,8 +148,7 @@ const Product = ({ setBreadcrumb }) => {
             setImageUrl(null);
             fetch({
                 pagination: {
-                    current: 1,
-                    pageSize: 10,
+                    ...DEFAULT_DATA.pagination
                 }
             });
         }).catch(err => {
@@ -197,7 +194,7 @@ const Product = ({ setBreadcrumb }) => {
     return (
         <IndexPageLayout
             title={t('product:title')}
-            onSearch={onSearch}
+            onSearch={(value) => setSearchKey(value)}
             onCreate={showCreateModal}
         >
             <MainAjaxTable

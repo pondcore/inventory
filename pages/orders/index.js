@@ -1,34 +1,49 @@
 
-import { Space, Button, Table, Avatar } from 'antd';
+import { Space, Button, Table, Avatar, Select } from 'antd';
 import IndexPageLayout from '@/comps/layouts/IndexPageLayout';
 import useTranslation from 'next-translate/useTranslation';
 import MainAjaxTable from '@/comps/table/MainAjaxTable';
-
+import DEFAULT_DATA from '@/constants/dataTable';
 
 import axios from "@/plugins/axios.config";
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router'
 
+const { Option } = Select;
 const Order = ({ setBreadcrumb }) => {
     let { t } = useTranslation();
     const router = useRouter()
     const [orders, setOrders] = useState([]);
-
     const [tableProps, setTableProps] = useState({
         loading: false,
         pagination: {
-            current: 1,
-            pageSize: 10,
-        },
+            ...DEFAULT_DATA.pagination
+        }
     });
+    const optionSearch = [
+        { value: 'customer', title: 'ชื่อลูกค้า' },
+        { value: 'product_name', title: 'ชื่อสินค้า' },
+        { value: 'product_sku', title: 'รหัสสินค้า' },
+    ]
+    const [optionSearchValue, setOptionSearchValue] = useState(optionSearch[0].value);
+    const [searchKey, setSearchKey] = useState(null);
+    useEffect(() => {
+        fetch({
+            pagination: {
+                ...DEFAULT_DATA.pagination
+            }
+        })
+    }, [searchKey])
 
-    const manageColumns = (text, record) => (
+
+
+    const manageColumns = (text, _) => (
         <Space size="middle">
             <Button onClick={() => { openEdit(text) }}>{t('common:editButton')}</Button>
         </Space>
     );
 
-    const coverColumns = (text, record) => (
+    const coverColumns = (text, _) => (
         <Space size="middle">
             <Button type="primary" onClick={() => router.push(`/orders/${text}/print`)}>{t('order:table.printButton')}</Button>
         </Space>
@@ -141,6 +156,8 @@ const Order = ({ setBreadcrumb }) => {
             method: 'get',
             params: {
                 ...params.pagination,
+                q: searchKey,
+                qField: optionSearchValue,
             }
         }).then(({ data }) => {
             let tempOrder = data.orders ? data.orders : [];
@@ -170,16 +187,21 @@ const Order = ({ setBreadcrumb }) => {
         }])
     }, [])
 
-    const onSearch = value => console.log(value);
     const openCreate = async () => {
         router.push('/orders/create')
-
     };
     const openEdit = async (dataId) => {
         router.push(`/orders/${dataId}/edit`)
     };
+
     return (
-        <IndexPageLayout title={t('order:title')} onSearch={onSearch} onCreate={openCreate}>
+        <IndexPageLayout
+            title={t('order:title')}
+            onSearch={(value) => setSearchKey(value)}
+            setOptionSearch={setOptionSearchValue}
+            onCreate={openCreate}
+            optionSearch={optionSearch}
+        >
             <MainAjaxTable
                 fetchData={fetch}
                 dataSource={orders}
